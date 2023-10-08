@@ -1,0 +1,23 @@
+#!/bin/bash
+
+folder_to_watch="/home/nathan/mistral/input"
+folder_to_send="/home/nathan/mistral/output"
+script_to_run="/home/nathan/mistral/ollama-run"
+
+while true; do
+    file=$(inotifywait -e create "$folder_to_watch" | awk '{print $3}')
+    
+    if [[ "$file" =~ .*\.txt$ ]]; then
+        file_path="$folder_to_watch/$file"
+        output_filename="${file%.*}.out.txt"
+        output_path="$folder_to_send/$output_filename"
+
+        # Ensure the output file exists (create it if it doesn't)
+        touch "$output_path"
+
+        # Run ollama-run with the contents of the input file and append the output to the output file
+        "$script_to_run" "Respond only with TRUE or FALSE: '$(cat "$file_path")'" >> "$output_path"
+
+        echo "Executed $script_to_run with contents of $file_path as an argument."
+    fi
+done
