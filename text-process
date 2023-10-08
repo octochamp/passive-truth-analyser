@@ -1,8 +1,8 @@
 #!/bin/bash
 
-folder_to_watch="/home/nathan/mistral/input"
-folder_to_send="/home/nathan/mistral/output"
-script_to_run="/home/nathan/mistral/ollama-run"
+folder_to_watch="./input"
+folder_to_send="./output"
+script_to_run="./ollama-run"
 
 while true; do
     file=$(inotifywait -e create "$folder_to_watch" | awk '{print $3}')
