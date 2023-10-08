@@ -9,8 +9,8 @@ npm-debug.log
 yarn-error.log
 
 #inputted and outputted files
-input/*.txt
-output/*.txt
+output-ai/*.txt
+output-voice/*.txt
 
 #DeepSpeech
 DeepSpeech-examples

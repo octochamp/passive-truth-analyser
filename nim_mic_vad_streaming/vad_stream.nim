@@ -45,7 +45,7 @@ var
     textAsBytes: seq[byte]
 
 let
-    folderPath = "nim_mic_vad_streaming/voice-output/"
+    folderPath = "output-voice/"
     fileName = "ai-input.txt"
 
 let
@@ -162,7 +162,7 @@ when isMainModule:
                     for c in text:
                         textAsBytes.add(byte(c))
                     echo("Transcript: ",text)
-                    writeFile(fileName, textAsBytes)
+                    writeFile(folderPath & fileName, textAsBytes)
                     freeString(text)
                 if saveWav:
                     fwav.close()
