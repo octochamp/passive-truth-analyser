@@ -11,3 +11,8 @@ yarn-error.log
 #inputted and outputted files
 input/*.txt
 output/*.txt
+
+#DeepSpeech
+DeepSpeech-examples/
+DeepSpeech-models/*.pbmm
+DeepSpeech-models/*.scorer
