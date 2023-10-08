@@ -1,7 +1,9 @@
+# Build this using:
+# nim c -f -d:release vad_stream.nim
+
 import os ,deques,math,strutils,parseopt,tables
 import strformat
 import webrtcvad,portaudio,deepspeech,wav
-
 
 proc sum[T](temp: Deque[T]): int = 
     for i in 0..<len(temp):
@@ -14,8 +16,6 @@ for kind,key,value in getopt():
         saveWav = true
     else:
         args.add(key,value)
-        
-
 
 #doAssert args.len == 2,"Incorrect commandLine params ,Please check again"
 doAssert "model" in args  #to run without external scorer.
@@ -45,7 +45,7 @@ var
     textAsBytes: seq[byte]
 
 let
-    folderPath = "output-voice/"
+    folderPath = "inputs-outputs/1-voice-output"
     fileName = "ai-input.txt"
 
 let

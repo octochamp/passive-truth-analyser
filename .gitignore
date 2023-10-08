@@ -2,15 +2,13 @@
 #
 .DS_Store
 
-# node.js
-#
-node_modules/
-npm-debug.log
-yarn-error.log
+#executables
+nim_mic_vad_streaming/vad_stream.exe
 
 #inputted and outputted files
-output-ai/*.txt
-output-voice/*.txt
+inputs-outputs/1-voice-output/*.txt
+inputs-outputs/2-ai-input/*.txt
+inputs-outputs/3-ai-output/*.txt
 
 #DeepSpeech
 DeepSpeech-examples
