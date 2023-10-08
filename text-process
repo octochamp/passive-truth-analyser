@@ -18,11 +18,13 @@ while true; do
 
         sanitised_file_contents=$(echo "$file_contents" | tr -cd '[:alnum:] ')
 
-        script_output="$("$script_to_run" "Respond only with TRUE or FALSE: '$file_contents'")"
+        script_output="$("$script_to_run" "Respond only with one word, "TRUE" or "FALSE": '$file_contents'")"
 
         output_path="$folder_to_send/$sanitised_file_contents.txt"
 
         echo "$script_output" | tee -a "$output_path"
+
+        rm -r "$file_path"
 
         echo "Executed $script_to_run with contents of $file_path ($file_contents) as an argument."
     fi
