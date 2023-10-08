@@ -45,8 +45,8 @@ var
     textAsBytes: seq[byte]
 
 let
-    folderPath = "input/"
-    fileName = "input.txt"
+    folderPath = "nim_mic_vad_streaming/voice-output/"
+    fileName = "ai-input.txt"
 
 let
     #data sharing is being done through FILES(on disk)..This is not the fastest way,being done because was not able to  make portaudio work with --threads:on flag.
@@ -162,7 +162,7 @@ when isMainModule:
                     for c in text:
                         textAsBytes.add(byte(c))
                     echo("Transcript: ",text)
-                    writeFile(folderPath & fileName, textAsBytes)
+                    writeFile(fileName, textAsBytes)
                     freeString(text)
                 if saveWav:
                     fwav.close()

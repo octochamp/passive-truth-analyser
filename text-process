@@ -1,7 +1,7 @@
 #!/bin/bash
 
-folder_to_watch="./input"
-folder_to_send="./output"
+folder_to_watch="./ai-input"
+folder_to_send="./ai-output"
 script_to_run="./ollama-run"
 
 while true; do
