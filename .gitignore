@@ -13,6 +13,5 @@ input/*.txt
 output/*.txt
 
 #DeepSpeech
-DeepSpeech-examples/
 DeepSpeech-models/*.pbmm
 DeepSpeech-models/*.scorer
