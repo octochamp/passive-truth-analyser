@@ -16,3 +16,4 @@ output/*.txt
 DeepSpeech-examples
 DeepSpeech-models/*.pbmm
 DeepSpeech-models/*.scorer
+nim_mic_vad_streaming/libdeepspeech.so
