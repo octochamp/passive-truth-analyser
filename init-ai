@@ -22,10 +22,16 @@ while true; do
 
         output_path="$folder_to_send/$sanitised_file_contents.txt"
 
+        echo ""
+
+        echo "$file_contents"
+
         echo "$script_output" | tee -a "$output_path"
+
+        echo ""
 
         rm -r "$file_path"
 
-        echo "Executed $script_to_run with contents of $file_path ($file_contents) as an argument."
+        # echo "Executed $script_to_run with contents of $file_path ($file_contents) as an argument."
     fi
 done
