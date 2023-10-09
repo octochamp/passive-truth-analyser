@@ -14,4 +14,5 @@ inputs-outputs/3-ai-output/*.txt
 DeepSpeech-examples
 DeepSpeech-models/*.pbmm
 DeepSpeech-models/*.scorer
+DeepSpeech-models/deepspeech-0.9.3-models.scorer:Zone.Identifier
 nim_mic_vad_streaming/libdeepspeech.so
