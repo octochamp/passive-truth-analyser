@@ -40,13 +40,15 @@ var
     triggered = false
     fwav: wavObj
     count = 0
+    fileCount = 0
     text: cstring
     scorerPath: string
     textAsBytes: seq[byte]
 
 let
-    folderPath = "inputs-outputs/1-voice-output"
-    fileName = "ai-input.txt"
+    folderPath = "inputs-outputs/1-voice-output/"
+    fileName = "ai-input"
+    fileExtension = ".txt"
 
 let
     #data sharing is being done through FILES(on disk)..This is not the fastest way,being done because was not able to  make portaudio work with --threads:on flag.
@@ -132,7 +134,9 @@ when isMainModule:
 
                 #START THE DEEP SPEECH STREAM...here.
                 codeD = createStream(modelPtr,unsafeAddr(deepStreamPtr))
-                echo("TRIGGERED !!!!!!!!!!")
+                echo("Voice detected...")
+                echo(fileCount)
+                #fileCount = fileCount + 1
                 if saveWav:
                     fwav = wavWrite(fmt"chunk-{count:03}.wav",uint32(sampleRate),uint16(nChannels))
 
@@ -160,9 +164,12 @@ when isMainModule:
 
                 if len(text)>0:
                     for c in text:
-                        textAsBytes.add(byte(c))
-                    echo("Transcript: ",text)
-                    writeFile(folderPath & fileName, textAsBytes)
+                        textAsBytes.add(byte(c)) # convert the cstring `text` to bytes which can be used in a string
+                    echo("Transcript: ",text) # print to the console
+                    let n = fmt"_no{fileCount}_" # Format fileCount as a string
+                    writeFile(folderPath & fileName & n & fileExtension, textAsBytes) # Construct a file name and write the file
+                    fileCount = fileCount + 1 # Increment the file counter
+                    textAsBytes = @[]  # Clear the textAsBytes sequence
                     freeString(text)
                 if saveWav:
                     fwav.close()
