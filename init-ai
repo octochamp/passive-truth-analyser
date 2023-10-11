@@ -39,7 +39,7 @@ while true; do
 
         rm -r "$input_path"
 
-        sleep 4
+        sleep 6
 
         echo -n "x" | tee "$output_path"
 
