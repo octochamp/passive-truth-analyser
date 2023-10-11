@@ -33,7 +33,7 @@ while true; do
 
         # echo "$script_output" | tee -a "$output_path"
         echo "$script_output, converted to $caps_short_script_output"
-        echo "$short_script_output" | tee "$output_path"
+        echo -n "$short_script_output" | tee "$output_path"
 
         echo ""
 
@@ -41,7 +41,7 @@ while true; do
 
         sleep 4
 
-         echo "x" | tee "$output_path"
+        echo -n "x" | tee "$output_path"
 
         # echo "Executed $script_to_run with contents of $file_path ($file_contents) as an argument."
     fi
