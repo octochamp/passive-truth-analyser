@@ -3,7 +3,7 @@
 .DS_Store
 
 #executables
-nim_mic_vad_streaming/vad_stream.exe
+*.exe
 
 #inputted and outputted files
 inputs-outputs/1-voice-output/*.txt

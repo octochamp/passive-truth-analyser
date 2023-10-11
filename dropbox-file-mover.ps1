@@ -1,5 +1,5 @@
 # Set the source and target folders
-$sourceFolder = "D:\Dropbox (BBC)\RCA IED\2023 10 Future Cities\test"
+$sourceFolder = "D:\Dropbox (BBC)\RCA IED\2023 10 Future Cities\live_link"
 $targetFolder = "\\wsl.localhost\Ubuntu\home\nathan\passive-verification-device\inputs-outputs\2-ai-input"
 
 # Get all files with the .txt extension in the source folder

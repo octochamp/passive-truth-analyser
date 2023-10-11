@@ -1,7 +1,7 @@
 # Build this using:
 # nim c -f -d:release vad_stream.nim
 
-import os ,deques,math,strutils,parseopt,tables
+import deques,math,strutils,parseopt,tables
 import strformat
 import webrtcvad,portaudio,deepspeech,wav
 
@@ -46,7 +46,7 @@ var
     textAsBytes: seq[byte]
 
 let
-    folderPath = "inputs-outputs/1-voice-output/"
+    folderPath = "C://Users//naths//Dropbox (BBC)//RCA IED//2023 10 Future Cities//live_link"
     fileName = "ai-input"
     fileExtension = ".txt"
 
@@ -72,7 +72,7 @@ proc simpleCB(inpBuff: pointer,outBuff: pointer,framesPerBuffer: culong,timeInfo
 
 when isMainModule:
     codeV = initVad(vad)
-    if codeV== 0'i32:
+    if codeV == 0'i32:
         echo("vad Initialized")
     codeV = setMode(vad,3'i32)
     assert codeV == 0'i32
@@ -110,7 +110,7 @@ when isMainModule:
         left = len(audioData)*sizeof(int16)
         tt = 0 
         while true:
-            curr = f2.readBuffer(cast[pointer](cast[int](addr(audioData[0]))+ tt),left)
+            curr = f2.readBuffer(cast[pointer](cast[int](addr(audioData[0])) + tt),left)
             tt = tt + curr
             left = left - curr
             if (left > 0):
