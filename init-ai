@@ -20,6 +20,10 @@ while true; do
 
         script_output="$("$script_to_run" "Respond only with one word, "TRUE" or "FALSE": '$input_contents'")"
 
+        short_script_output=$(echo "$script_output" | cut -c1) # truncate the script output to the first letter (ie. 'True' becomes T)
+
+        caps_short_script_output=$(echo "$short_script_output" | tr '[:lower:]' '[:upper:]') # convert script output to all caps, just in case
+
         # output_path="$output_folder/$sanitised_input_contents.txt" #-- old output with query as filename and true or false as content
         output_path="$output_folder/output.txt" #-- new output with "output.txt" as filename and true or false as content 
 
@@ -28,7 +32,8 @@ while true; do
         echo "$input_contents"
 
         # echo "$script_output" | tee -a "$output_path"
-        echo "$script_output" | tee "$output_path"
+        echo "$script_output, converted to $caps_short_script_output"
+        echo "$short_script_output" | tee "$output_path"
 
         echo ""
 
