@@ -1,36 +1,38 @@
 #!/bin/bash
 
-folder_to_watch="inputs-outputs/2-ai-input"
-folder_to_send="inputs-outputs/3-ai-output"
+input_folder="inputs-outputs/2-ai-input"
+output_folder="inputs-outputs/3-ai-output"
 script_to_run="./ollama-run"
 
 while true; do
-    file=$(inotifywait -e create "$folder_to_watch" | awk '{print $3}')
+    input=$(inotifywait -e create "$input_folder" | awk '{print $3}')
     
-    if [[ "$file" =~ .*\.txt$ ]]; then
-        file_path="$folder_to_watch/$file"
+    if [[ "$input" =~ .*\.txt$ ]]; then
+        input_path="$input_folder/$input"
 
         # Check for and remove null bytes from the file
-        clean_file_path="/tmp/clean_file.txt"
-        tr -d '\000' < "$file_path" > "$clean_file_path"
+        clean_input_path="/tmp/clean_file.txt"
+        tr -d '\000' < "$input_path" > "$clean_input_path"
 
-        file_contents=$(cat "$file_path")
+        input_contents=$(cat "$input_path")
 
-        sanitised_file_contents=$(echo "$file_contents" | tr -cd '[:alnum:] ')
+        sanitised_input_contents=$(echo "$input_contents" | tr -cd '[:alnum:] ')
 
-        script_output="$("$script_to_run" "Respond only with one word, "TRUE" or "FALSE": '$file_contents'")"
+        script_output="$("$script_to_run" "Respond only with one word, "TRUE" or "FALSE": '$input_contents'")"
 
-        output_path="$folder_to_send/$sanitised_file_contents.txt"
-
-        echo ""
-
-        echo "$file_contents"
-
-        echo "$script_output" | tee -a "$output_path"
+        # output_path="$output_folder/$sanitised_input_contents.txt" #-- old output with query as filename and true or false as content
+        output_path="$output_folder/output.txt" #-- new output with "output.txt" as filename and true or false as content 
 
         echo ""
 
-        rm -r "$file_path"
+        echo "$input_contents"
+
+        # echo "$script_output" | tee -a "$output_path"
+        echo "$script_output" | tee "$output_path"
+
+        echo ""
+
+        rm -r "$input_path"
 
         # echo "Executed $script_to_run with contents of $file_path ($file_contents) as an argument."
     fi
