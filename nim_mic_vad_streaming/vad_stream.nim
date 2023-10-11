@@ -46,7 +46,7 @@ var
     textAsBytes: seq[byte]
 
 let
-    folderPath = "C://Users//naths//Dropbox (BBC)//RCA IED//2023 10 Future Cities//live_link"
+    folderPath = "C://Users//naths//Dropbox (BBC)//RCA IED//2023 10 Future Cities//live_link//2-ai-input-dropbox//"
     fileName = "ai-input"
     fileExtension = ".txt"
 

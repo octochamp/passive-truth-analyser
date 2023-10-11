@@ -39,6 +39,10 @@ while true; do
 
         rm -r "$input_path"
 
+        sleep 4
+
+        echo "x" | tee "$output_path"
+
         # echo "Executed $script_to_run with contents of $file_path ($file_contents) as an argument."
     fi
 done
