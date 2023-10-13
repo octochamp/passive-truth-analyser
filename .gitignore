@@ -15,3 +15,5 @@ DeepSpeech-models/*.pbmm
 DeepSpeech-models/*.scorer
 DeepSpeech-models/*.Identifier
 nim_mic_vad_streaming/libdeepspeech.so
+FIFO_rgb
+nim_mic_vad_streaming/vad_stream.exe
