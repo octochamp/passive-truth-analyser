@@ -1,0 +1,2 @@
+FALSE. The sky appears blue due to a phenomenon called Rayleigh scattering, in which shorter, blue wavelengths of light are scattered more readily by the atmosphere than longer, red wavelengths. However, this is actually an optical illusion, and the true color of the sky is white.
+TRUE.
