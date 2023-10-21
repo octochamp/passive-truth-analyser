@@ -7,11 +7,11 @@ SCORERPATH="$DIR/DeepSpeech-models/deepspeech-0.9.3-models.scorer"
 
 # Set LD_LIBRARY_PATH to include your custom path, also unset old library path
 unset LD_LIBRARY_PATH
-#export LD_LIBRARY_PATH="$DIR/linux_nim_vad_streaming/lib:${LD_LIBRARY_PATH}"
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/cuda/lib64:/home/nathan/Documents/RCA-IED/passive-verification-device/linux_nim_vad_streaming/lib/
+#export LD_LIBRARY_PATH="$DIR/app/lib:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/nathan/Documents/RCA-IED/passive-verification-device/app/lib/
 
 # Launch your Nim application
-$DIR/linux_nim_vad_streaming/vad_stream --model=$MODELPATH --scorer=$SCORERPATH "$@"
+$DIR/app/vad_stream --model=$MODELPATH --scorer=$SCORERPATH "$@"
 #clear
-#echo "$DIR/linux_nim_vad_streaming/vad_stream --model=$MODELPATH --scorer=$SCORERPATH "$@""
+#echo "$DIR/app/vad_stream --model=$MODELPATH --scorer=$SCORERPATH "$@""
 #echo $LD_LIBRARY_PATH
