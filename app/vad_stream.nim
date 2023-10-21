@@ -7,14 +7,22 @@ import alsa,webrtcvad,wav
 import deepspeech
 import asyncdispatch, asynchttpserver, ws
 
-var output:string
+# Build the LLM sentence commands
+var
+    cmdLaunch:string = "./app/ollama-run "
+    cmdEvalOne:string = "\"Respond only with a single numeral: On a scale where 0 is totally false and 9 is totally true, how accurate is this statement, \'"
+    cmdEvalTwo:string = "\'\""
+    cmdExplainOne:string = "\"I previously asked you to rank the statement \'"
+    cmdExplainTwo:string = "\' on a scale of 0 to 9, where 0 is totally false and 9 is totally true. You responded "
+    cmdExplainThree:string = ". Explain this answer in fewer than 12 words.\""
+
+# open WebSocket
+var clientWs = waitFor newWebSocket("ws://127.0.0.1:9002/ws")
 
 proc main(output:string) {.async.} = 
-    var ws = await newWebSocket("ws://127.0.0.1:9001/ws")
-    echo await ws.receiveStrPacket()
-    await ws.send(output)
-    echo await ws.receiveStrPacket()
-    ws.close()
+    # echo await ws.receiveStrPacket()
+    await clientWs.send(output)
+    echo await clientWs.receiveStrPacket()
 
 var 
     args = initTable[string, string]()
@@ -196,27 +204,29 @@ while true:
                 let sanitizedText = strVal.replace("'", "\\'")  # Escape single quotes
 
                 # Create and run LLM evaluation command
-                let evalCmd = "./app/ollama-run \"Respond only with one word, TRUE or FALSE: " & sanitizedText & "\""
+                # let evalCmd = "./app/ollama-run \"Respond only with a single numeral: On a scale where 0 is totally false and 9 is totally true, how accurate is this statement, " & sanitizedText & "\""
+                let evalCmd = cmdLaunch & cmdEvalOne & sanitizedText & cmdEvalTwo
                 let evalResult = execCmdEx(evalCmd)
-
-                # Create and run LLM explanation command
-                let explainCmd = "./app/ollama-run \"In less than 15 words, explain why this statement: \'" & sanitizedText & "\' is " & evalResult & "\""
-                let explainResult = execCmdEx(explainCmd)
+                
                 
                 # Error check and then deliver results of each command to WebSocket. Prepend evaluation with 0 and explanation with 1
                 if evalResult.exitcode == 0:
-                    waitFor main("0" & evalResult.output)
+                    #waitFor main(evalResult.output)
+                    let explainCmd = cmdLaunch & cmdExplainOne & sanitizedText & cmdExplainTwo & evalResult.output & cmdExplainThree
+                    let explainResult = execCmdEx(explainCmd)
+                    if explainResult.exitcode == 0:
+                        waitFor main(evalResult.output & explainResult.output)
+                    else:
+                        echo "Explanation command failed with exit code: ", explainResult.exitCode
                 else:
                     echo "Evaluation command failed with exit code: ", evalResult.exitCode
 
-                if explainResult.exitcode == 0:
-                    waitFor main("1" & explainResult.output)
-                else:
-                    echo "Explanation command failed with exit code: ", explainResult.exitCode
-
                 textAsBytes = @[]  # Clear the textAsBytes sequence
                 freeString(text)
+
             if saveWav:
                 fwav.close()
                 echo("Written")
                 count = count + 1
+
+# ws.close()

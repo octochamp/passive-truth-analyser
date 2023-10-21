@@ -10,7 +10,7 @@ proc cb(req: Request) {.async, gcsafe.} =
     try:
       var ws = await newWebSocket(req)
       connections.add ws
-      await ws.send("Welcome to simple chat server")
+      await ws.send("Websocket:")
       while ws.readyState == Open:
         let packet = await ws.receiveStrPacket()
         echo "Received packet: "
@@ -27,4 +27,4 @@ proc cb(req: Request) {.async, gcsafe.} =
   await req.respond(Http200, "Hello World")
 
 var server = newAsyncHttpServer()
-waitFor server.serve(Port(9001), cb)
+waitFor server.serve(Port(9002), cb)
