@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>PVD AI => PVD Bridge</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/pvdBridge.js"></script>
+        <script src="js/bangleFunctions.js"></script>
+        <script src="js/puck.js"></script>
+    </head>
+    <body>
+        <h1><strong>Passive Verification Device</strong> AI => PVD bridge v2</h1>
+        <button id="connectButton" onclick="connectBangle()">Connect Bangle.js</button>
+        <button id="startWebSocket" onclick="startWebSocket()">Start WebSocket Server</button>
+        <br>
+        <br>
+        <br>
+        <h2>Functions</h2>
+        <button onclick="setLCDPower('1')">Turn on LCD</button>
+        <button onclick="clearScreenAll()">Reset All</button>
+        <button onclick="setFontAlignCentre()">Set Font alignment</button>
+        <button onclick="setFontBig()">Big pixel font</button>
+        <button onclick="setFontSmall()">Small pixel font</button>
+        <button onclick="setFontVector('5')">5px Vector font</button>
+        <button onclick="setFontVector('7')">7px Vector font</button>
+        <button onclick="setFontVector('10')">10px Vector font</button>
+        <button onclick="setBgColor('0,0,0')">Set Background colour black</button>
+        <button onclick="setColor('-1')">Set Font colour white</button>
+        <button onclick="drawString('TEST')">Write TEST</button>
+        <button onclick="drawString('Everybody and their friends cant smell what the Rock is cooking')">Write sentence</button>
+        <button onclick="vibrate(200)">Vibrate</button>
+        <button onclick="clearScreen()">Clear screen</button>
+
+    </body>
+</html>

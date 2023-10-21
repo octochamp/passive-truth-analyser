@@ -5,6 +5,16 @@ import osproc
 import deques,math,strutils,parseopt,tables,strformat
 import alsa,webrtcvad,wav
 import deepspeech
+import asyncdispatch, asynchttpserver, ws
+
+var output:string
+
+proc main(output:string) {.async.} = 
+    var ws = await newWebSocket("ws://127.0.0.1:9001/ws")
+    echo await ws.receiveStrPacket()
+    await ws.send(output)
+    echo await ws.receiveStrPacket()
+    ws.close()
 
 var 
     args = initTable[string, string]()
@@ -94,7 +104,8 @@ proc record(deviceName:string){.thread.} =
     snd_pcm_hw_params_free_nim(hw_params)
 
     while true:
-        framesLen = snd_pcm_readi_nim(capture_handle,addr(recordBuff[0]),culong(size)) #reading 512 samples ..singlechannel,each 2 bytes..hence 1024 bytes.
+        #reading 512 samples ..singlechannel,each 2 bytes..hence 1024 bytes.
+        framesLen = snd_pcm_readi_nim(capture_handle,addr(recordBuff[0]),culong(size))
         assert framesLen == clong(size)
         
             
@@ -183,14 +194,29 @@ while true:
                 echo("Transcript: ",text)
                 let strVal = cast[string](textAsBytes) # convert the byte sequence textAsBytes to a string called strVal
                 let sanitizedText = strVal.replace("'", "\\'")  # Escape single quotes
-                let command = "./app/ollama-run \"Respond only with one word, TRUE or FALSE: " & sanitizedText & "\"" # run cmd line instruction to get result from LLM
-                discard execCmd(command)
+
+                # Create and run LLM evaluation command
+                let evalCmd = "./app/ollama-run \"Respond only with one word, TRUE or FALSE: " & sanitizedText & "\""
+                let evalResult = execCmdEx(evalCmd)
+
+                # Create and run LLM explanation command
+                let explainCmd = "./app/ollama-run \"In less than 15 words, explain why this statement: \'" & sanitizedText & "\' is " & evalResult & "\""
+                let explainResult = execCmdEx(explainCmd)
+                
+                # Error check and then deliver results of each command to WebSocket. Prepend evaluation with 0 and explanation with 1
+                if evalResult.exitcode == 0:
+                    waitFor main("0" & evalResult.output)
+                else:
+                    echo "Evaluation command failed with exit code: ", evalResult.exitCode
+
+                if explainResult.exitcode == 0:
+                    waitFor main("1" & explainResult.output)
+                else:
+                    echo "Explanation command failed with exit code: ", explainResult.exitCode
+
                 textAsBytes = @[]  # Clear the textAsBytes sequence
                 freeString(text)
             if saveWav:
                 fwav.close()
                 echo("Written")
                 count = count + 1
-
-{.gcsafe.}:
-  connections.add(ws)

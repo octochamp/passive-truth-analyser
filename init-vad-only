@@ -11,10 +11,7 @@ unset LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/nathan/Documents/RCA-IED/passive-verification-device/app/lib/
 
 # Launch both vad_stream and websocket as concurrent background apps
-$DIR/app/vad_stream --model=$MODELPATH --scorer=$SCORERPATH "$@" &
-$DIR/app/websocket "$@" &
-
-wait
+$DIR/app/vad_stream --model=$MODELPATH --scorer=$SCORERPATH "$@"
 
 #clear
 #echo "$DIR/app/vad_stream --model=$MODELPATH --scorer=$SCORERPATH "$@""
