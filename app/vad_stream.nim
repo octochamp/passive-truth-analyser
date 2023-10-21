@@ -183,7 +183,7 @@ while true:
                 echo("Transcript: ",text)
                 let strVal = cast[string](textAsBytes) # convert the byte sequence textAsBytes to a string called strVal
                 let sanitizedText = strVal.replace("'", "\\'")  # Escape single quotes
-                let command = "./ollama-run \"Respond only with one word, TRUE or FALSE: " & sanitizedText & "\"" # run cmd line instruction to get result from LLM
+                let command = "./app/ollama-run \"Respond only with one word, TRUE or FALSE: " & sanitizedText & "\"" # run cmd line instruction to get result from LLM
                 discard execCmd(command)
                 textAsBytes = @[]  # Clear the textAsBytes sequence
                 freeString(text)
@@ -192,6 +192,5 @@ while true:
                 echo("Written")
                 count = count + 1
 
-
-#joinThread(thread)
-#echo("Thread finished..")
+{.gcsafe.}:
+  connections.add(ws)
