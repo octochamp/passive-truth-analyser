@@ -10,11 +10,11 @@ import asyncdispatch, asynchttpserver, ws
 # Build the LLM sentence commands
 var
     cmdLaunch:string = "./app/ollama-run "
-    cmdEvalOne:string = "\"Respond only with a single numeral: On a scale where 0 is totally false and 9 is totally true, how accurate is this statement, \'"
+    cmdEvalOne:string = "\"Respond only with a single digit numeral between 0 and 9: On a scale where 0 is totally false and 9 is totally true, how accurate is it to say, \'"
     cmdEvalTwo:string = "\'\""
     cmdExplainOne:string = "\"I previously asked you to rank the statement \'"
     cmdExplainTwo:string = "\' on a scale of 0 to 9, where 0 is totally false and 9 is totally true. You responded "
-    cmdExplainThree:string = ". Explain this answer in fewer than 12 words.\""
+    cmdExplainThree:string = ". Explain this answer very concisely using fewer than 10 words.\""
 
 # open WebSocket
 var clientWs = waitFor newWebSocket("ws://127.0.0.1:9002/ws")

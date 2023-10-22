@@ -23,8 +23,20 @@ async function setColor(color) {
     await Puck.write("g.setColor("+color+"); \n");
 }
 
-async function setFontAlignCentre() {
+async function setFontScore() {
+    await Puck.write("g.setFontAlign(0,15,0)");
+}
+
+async function setFontLineOne() {
     await Puck.write("g.setFontAlign(0,0,0); \n");
+}
+
+async function setFontLineTwo() {
+    await Puck.write("g.setFontAlign(0,-36,0); \n");
+}
+
+async function setFontLineThree() {
+    await Puck.write("g.setFontAlign(0,-72,0); \n");
 }
 
 async function setFontSmall() {
@@ -45,4 +57,8 @@ async function drawString(text) {
 
 async function vibrate(time) {
     await Puck.write("Bangle.buzz(" + time + "); \n")
+}
+
+async function scroll() {
+    await Puck.write("g.scroll(0,1); \n");
 }
