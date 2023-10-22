@@ -35,6 +35,7 @@ for kind,key,value in getopt():
 
 doAssert "model" in args  #to run without external scorer.
 
+
 #All on the Stack no GC..can be used from another thread except deviceName ..pass it as argument.
 const
     rate = 16000'u32
@@ -48,7 +49,7 @@ const
 let
     capture_handle: snd_pcm_ref = nil
     hw_params: snd_pcm_hw_params_ref = nil
-    device_name = "plughw:2,0"  #PCM hardware alsa Device.
+    device_name = "plughw:1,0"  #PCM hardware alsa Device.
     size = (int((frameDuration*int(rate))/1000))
     modelPtr: ModelState = nil  #deepSpeech model  
     deepStreamPtr: StreamingState = nil  #deepSpeech model stream

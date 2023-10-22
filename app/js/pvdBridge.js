@@ -61,28 +61,34 @@ async function dataHandler(data) {
 }
 
 async function alert(score, stringOne, stringTwo, stringThree) {
-    await setBgColor(-1);
-    await setColor(0,0,0);
+    await setBgColor(0,0,1);
+    await setColor(1,1,1);
     await clearScreen();
     await setFontScore();
-    await setFontBig();
-    await drawString(score);;
-    await vibrate(100);
+    await setFontAlign();
+    await drawString(score,"88","34");
+    await drawString(score,"88","78");
+    await vibrate(50);
     await setLCDPower();
-    await setFontVector(12);
-    await delay(500);
-    await setFontLineOne();
-    await drawString(stringOne);
-    await setFontLineTwo();
-    await delay(100);
-    await drawString(stringTwo);
-    await setFontLineThree();
-    await delay(100);
-    await drawString(stringThree);
+    await setFontVector(14);
+    await drawString(stringOne, "88","118");
+    await drawString(stringTwo,"88","134");
+    await drawString(stringThree,"88","150");
     await delay(3000);
     await clearScreen();
-    
 }
+
+function alertTest(score, stringOne, stringTwo, stringThree) {
+    alert(score, stringOne, stringTwo, stringThree);
+}
+
+/* function alert(score, stringOne, stringTwo, stringThree) {
+    Puck.write("g.setBgColor(0,0,1); \n");
+    Puck.write("g.setColor(0,0,0); \n");
+    Puck.write("g.clear(); \n");
+    Puck.write("g.setFont('Vector:40') \n")
+
+} */
 
 function startWebSocket() {
     async function handleMessage(event) {

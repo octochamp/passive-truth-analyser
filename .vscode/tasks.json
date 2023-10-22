@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build vad_stream",
+            "type": "shell",
+            "command": "nim c -f -d:release --threads:on /home/nathan/Documents/RCA-IED/passive-verification-device/app/vad_stream.nim",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "build websocket",
+            "type": "shell",
+            "command": "nim c -f -d:release /home/nathan/Documents/RCA-IED/passive-verification-device/app/websocket.nim",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
