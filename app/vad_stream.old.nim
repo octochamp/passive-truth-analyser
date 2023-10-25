@@ -1,94 +1,38 @@
+# Build with:
+    # nim c -f -d:release --threads:on vad_stream.nim
+
 import osproc
 import deques,math,strutils,parseopt,tables,strformat
 import alsa,webrtcvad,wav
 import deepspeech
 import asyncdispatch, asynchttpserver, ws
 import re
-import json, httpclient
 
 # Build the LLM sentence commands
 var
-    ollamaPull:string = "curl -X POST http://localhost:11434/api/pull -d '{\"name\": \"llama2:7b\"}'"
-    cmdEvalOne:string = "Respond only with a single digit numeral between 0 and 9: On a scale where 0 is totally false and 9 is totally true, how accurate is it to say, \'"
-    cmdEvalTwo:string = "\'?"
-    cmdExplainOne:string = "On a scale where 0 is totally false and 9 is totally true, the statement \'"
-    cmdExplainTwo:string = "\' has a score of "
-    cmdExplainThree:string = ". Explain how true or false it is very concisely, using fewer than 10 words."
-    textAsBytes: seq[byte] # <-- for converting cstrings to text we can use
+    cmdLaunch:string = "./app/ollama-run "
+    cmdEvalOne:string = "\"Respond only with a single digit numeral between 0 and 9: On a scale where 0 is totally false and 9 is totally true, how accurate is it to say, \'"
+    cmdEvalTwo:string = "\'\""
+    cmdExplainOne:string = "\"I previously asked you to rank the statement \'"
+    cmdExplainTwo:string = "\' on a scale of 0 to 9, where 0 is totally false and 9 is totally true. You responded "
+    cmdExplainThree:string = ". Explain this answer very concisely using fewer than 10 words.\""
+    cmdFlag:string = " --nowordwrap"
 
-# --------- open WebSocket --------
+# proc to reformat the resutls from the LLM
+#[ proc removeBrailleChars(s: string): string =
+    var resultStr: string = ""
+    for ch in s:
+        if ord(ch) < 0x2800 or ord(ch) > 0x28FF:
+            resultStr.add(ch)
+    return resultStr ]#
 
+# open WebSocket
 var clientWs = waitFor newWebSocket("ws://127.0.0.1:9002/ws")
-proc webSocketSend(output:string) {.async.} = 
+proc main(output:string) {.async.} = 
+    # echo await ws.receiveStrPacket()
     await clientWs.send(output)
+    # echo await clientWs.receiveStrPacket()
 
-# ---------------------------------
-
-# --------- Pull the Ollama model, in case it's not been downloaded
-# ~ TODO Build in something to check the local models (https://github.com/jmorganca/ollama/blob/main/docs/api.md#list-local-models)
-# ~ and only pull if model isn't present
-
-# echo execCmdEx(ollamaPull)
-
-################ ---- Proc for when VAD is triggered ---- ################
-
-proc requestCommand(request:string) {.async.} =
-    # Get evaluation score from LLM
-    #let evalCmd = "curl -s -S -X POST http://localhost:11434/api/generate -d \"{\'model\': \'mistral-openorca\', \'stream\': false, \'prompt\': \'" & cmdEvalOne & request & cmdEvalTwo & "\'}\""
-    #let evalRequest = execCmdEx(evalCmd)
-    var client = newHttpClient()
-    client.headers = newHttpHeaders({"Content-Type": "application/json"})  # set content type to JSON
-
-    let payload = %*{
-        "model": "mistral-openorca",
-        "stream": false,
-        "prompt": cmdEvalOne & request & cmdEvalTwo
-        }
-
-    let evalJsonString = client.post("http://localhost:11434/api/generate", $(payload))
-    #let evalJsonString = evalRequest.output
-    let evalJsonObject = parseJson(evalJsonString.body)
-    var evalResult = evalJsonObject["response"].getStr()
-
-    # Check if evalResult has single-digit numerals
-    # Compile the regex pattern only once for performance
-    let digitPattern = re(r"\d")
-    let nonDigitPattern = re(r"[^\d]")
-
-    # Check if evalResult has single-digit numerals
-    let foundIndex = evalResult.find(digitPattern)
-    if foundIndex != -1:
-        evalResult = replace(evalResult, nonDigitPattern, "")  # Remove all non-numeric characters
-    else:
-        evalResult = "X"  # If no numerals found, set to "X"
-    
-    # If we have a score then get explanation from LLM and send all to WebSocket. If not, pass `X` to WebSocket.
-    if evalResult != "X" :
-        var client = newHttpClient()
-        client.headers = newHttpHeaders({"Content-Type": "application/json"})  # set content type to JSON
-
-        let payload = %*{
-            "model": "mistral-openorca",
-            "stream": false,
-            "prompt": cmdExplainOne & request & cmdExplainTwo & evalResult & cmdExplainThree
-            }
-
-        let explainJsonString = client.post("http://localhost:11434/api/generate", $(payload))
-        let explainJsonObject = parseJson(explainJsonString.body)
-        let explainResult = explainJsonObject["response"].getStr()
-
-        # Format results as an array and send to WebSocket
-        let outputPackage = "[`" & request & "`,`" & evalResult & "`,`" & explainResult & "`]"
-        echo "OUTPUT: " & outputPackage
-        waitFor webSocketSend(outputPackage)
-    else:
-        let outputPackage = "[`" & request & "`,`" & evalResult & "`]"
-        waitFor webSocketSend(outputPackage)
-
-################ ---- ------------------------------ ---- ################
-
-
-# --------- DeepSpeech ------------
 var 
     args = initTable[string, string]()
     saveWav = false
@@ -98,8 +42,10 @@ for kind,key,value in getopt():
     else:
         args[key] = value
 
-doAssert "model" in args
+doAssert "model" in args  #to run without external scorer.
 
+
+#All on the Stack no GC..can be used from another thread except deviceName ..pass it as argument.
 const
     rate = 16000'u32
     sampleRate = rate
@@ -112,17 +58,18 @@ const
 let
     capture_handle: snd_pcm_ref = nil
     hw_params: snd_pcm_hw_params_ref = nil
+    device_name = "plughw:1,0"  #PCM hardware alsa Device.
     size = (int((frameDuration*int(rate))/1000))
     modelPtr: ModelState = nil  #deepSpeech model  
     deepStreamPtr: StreamingState = nil  #deepSpeech model stream
     modelPath = args["model"]
-    device_name = "plughw:1,0"  # !IMPORTANT Choose the PCM hardware ALSA Device here
     
 var
     text:cstring
     err: cint
     count = 0
     dir:cint
+#    framesLen: clong
     vad:vadObj  #VAD Object declaration
     codeV: cint  #to hold the error codes for VAD.
     codeD: cint #to hold the error codes for deepSpeech
@@ -132,9 +79,15 @@ var
     triggered = false
     fwav: wavObj
     scorerPath:string
+    textAsBytes: seq[byte]
 
+if "scorer" in args:
+    scorerPath = args["scorer"]
+
+#define a channel to hold the audio data.
 var chan: Channel[seq[int16]]
 
+#params->   deviceName:name of device to be opened  ,size:  number of frames to be read in one cycle...NOTE:  FRAMES,NOT BYTES.
 proc record(deviceName:string){.thread.} =
     var recordBuff = newSeq[int16](size)  #userSpace buffer to record mic data.
     var framesLen: clong
@@ -174,16 +127,18 @@ proc record(deviceName:string){.thread.} =
             
         chan.send(recordBuff)
 
+#########################################################################################
 proc sum[T](temp: Deque[T]): int = 
     for i in 0..<len(temp):
         result = result + temp[i].flag
 
+############################
 codeV = initVad(vad)
 if codeV == 0'i32:
     echo("vad Initialized")
 codeV = setMode(vad,3'i32)
 assert codeV == 0'i32
-
+###################################################################333
 codeD = createModel(modelPath,unsafeaddr(modelPtr))
 if codeD == 0'i32:
     echo("Model Created Successfully")
@@ -196,6 +151,7 @@ if "scorer" in args:
         echo("External Scorer Enabled.")
 else:
     echo("No scorer Used")
+###################
 
 chan.open()
 
@@ -203,7 +159,6 @@ var thread: Thread[string]
 createThread[string](thread,record,device_name)
 echo("Thread Created")
 #receive the data from the channel..blocking call.
-
 while true:
     frame = chan.recv()
     codeV = vad.isSpeech(frame,int(rate))
@@ -250,13 +205,45 @@ while true:
             if len(text)>0:
                 for c in text:
                     textAsBytes.add(byte(c)) # convert the cstring `text` to bytes which can be used in a string
-                let textString = cast[string](textAsBytes) # convert the byte sequence textAsBytes to a string called textString
-                let sanitisedTextString = textString.replace("'", "\\'")  # Escape single quotes
-                waitFor requestCommand(sanitisedTextString) # Run the proc to process and deliver to websocket
+                echo("Transcript: ",text)
+                let strVal = cast[string](textAsBytes) # convert the byte sequence textAsBytes to a string called strVal
+                let sanitizedText = strVal.replace("'", "\\'")  # Escape single quotes
+
+                # Create and run LLM evaluation command
+                # let evalCmd = "./app/ollama-run \"Respond only with a single numeral: On a scale where 0 is totally false and 9 is totally true, how accurate is this statement, " & sanitizedText & "\""
+                let evalCmd = cmdLaunch & cmdEvalOne & sanitizedText & cmdEvalTwo & cmdFlag
+                let evalResult = execCmdEx(evalCmd)
+                
+                
+                # Error check and then deliver results of each command to WebSocket.
+                if evalResult.exitcode == 0:
+                    
+                    # Remove newlines of Request and Evaluation Score
+                    let cleanedSanitizedText = sanitizedText.replace("\n", "")
+                    let cleanedEvalOutput = evalResult.output.replace("\n", "")
+
+                    # Contstruct command and get Explanation
+                    let explainCmd = cmdLaunch & cmdExplainOne & sanitizedText & cmdExplainTwo & evalResult.output & cmdExplainThree & cmdFlag
+                    let explainResult = execCmdEx(explainCmd)
+
+                    if explainResult.exitcode == 0:
+                        # Remove newlines and Ollama braille symbols from Evaluation
+                        #let cleanedExplainResult = removeBrailleChars(explainResult.output.replace("\n", ""))
+                        let cleanedExplainResult = explainResult.output.replace("\n", "")
+                        let packagedResult = "[\"" & sanitizedText & "\",\"" & evalResult.output & "\",\"" & cleanedExplainResult & "\"]"
+                        waitFor main(packagedResult) # Send Request, Evaluation score and Explanation as an array
+                        echo "Sent to WebSocket: " & packagedResult
+                    else:
+                        echo "Explanation command failed with exit code: ", explainResult.exitCode
+                else:
+                    echo "Evaluation command failed with exit code: ", evalResult.exitCode
+
                 textAsBytes = @[]  # Clear the textAsBytes sequence
                 freeString(text)
 
-        if saveWav:
+            if saveWav:
                 fwav.close()
                 echo("Written")
                 count = count + 1
+
+# ws.close()
