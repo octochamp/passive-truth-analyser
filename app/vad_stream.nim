@@ -11,9 +11,9 @@ var
     ollamaPull:string = "curl -X POST http://localhost:11434/api/pull -d '{\"name\": \"llama2:7b\"}'"
     cmdEvalOne:string = "Respond only with a single digit numeral between 0 and 9: On a scale where 0 is totally false and 9 is totally true, how accurate is it to say, \'"
     cmdEvalTwo:string = "\'?"
-    cmdExplainOne:string = "On a scale where 0 is totally false and 9 is totally true, the statement \'"
-    cmdExplainTwo:string = "\' has a score of "
-    cmdExplainThree:string = ". Explain how true or false it is very concisely, using fewer than 10 words."
+    cmdExplainOne:string = "Explain why the statement \'"
+    cmdExplainTwo:string = "\' is "
+    cmdExplainThree:string = ", in only 8 words."
     textAsBytes: seq[byte] # <-- for converting cstrings to text we can use
 
 # --------- open WebSocket --------
@@ -24,11 +24,38 @@ proc webSocketSend(output:string) {.async.} =
 
 # ---------------------------------
 
-# --------- Pull the Ollama model, in case it's not been downloaded
-# ~ TODO Build in something to check the local models (https://github.com/jmorganca/ollama/blob/main/docs/api.md#list-local-models)
-# ~ and only pull if model isn't present
+# ------- Pull the Ollama model, in case it's not been downloaded
+# ~~~~~~~~~~~ TODO Build in something to check the local models (https://github.com/jmorganca/ollama/blob/main/docs/api.md#list-local-models)
+# ~~~~~~~~~~~ and only pull if model isn't present
 
 # echo execCmdEx(ollamaPull)
+
+# Proc to turn the number rankings the LLM provides into readable forms it can then evaluate in a sentence
+proc makeReadableEval(evalResult:string): string =
+    let evalInt = parseInt(evalResult)
+    case evalInt
+    of 0 :
+        return "completely inaccurate"
+    of 1 :
+        return "mostly inaccurate"
+    of 2 :
+        return "primarily inaccurate"
+    of 3 :
+        return "partially inaccurate"
+    of 4 :
+        return "neither inaccurate nor accurate (neutral)"
+    of 5 :
+        return "neither accurate nor inaccurate"
+    of 6 :
+        return "partially accurate"
+    of 7 :
+        return "mainly accurate"
+    of 8 :
+        return "mostly accurate"
+    of 9 :
+        return "totally accurate"
+    else:
+        echo "ERROR: makeReadableEval was passed something other than a number from 0 to 9"
 
 ################ ---- Proc for when VAD is triggered ---- ################
 
@@ -64,15 +91,15 @@ proc requestCommand(request:string) {.async.} =
     
     # If we have a score then get explanation from LLM and send all to WebSocket. If not, pass `X` to WebSocket.
     if evalResult != "X" :
+        let readableEval = makeReadableEval(evalResult)
         var client = newHttpClient()
+        echo cmdExplainOne & request & cmdExplainTwo & readableEval & cmdExplainThree
         client.headers = newHttpHeaders({"Content-Type": "application/json"})  # set content type to JSON
-
         let payload = %*{
             "model": "mistral-openorca",
             "stream": false,
-            "prompt": cmdExplainOne & request & cmdExplainTwo & evalResult & cmdExplainThree
+            "prompt": cmdExplainOne & request & cmdExplainTwo & readableEval & cmdExplainThree
             }
-
         let explainJsonString = client.post("http://localhost:11434/api/generate", $(payload))
         let explainJsonObject = parseJson(explainJsonString.body)
         let explainResult = explainJsonObject["response"].getStr()
@@ -247,7 +274,7 @@ while true:
             triggered = false
             buff.clear()
             text = finishStream(deepStreamPtr)
-            if len(text)>0:
+            if len(text)>8:
                 for c in text:
                     textAsBytes.add(byte(c)) # convert the cstring `text` to bytes which can be used in a string
                 let textString = cast[string](textAsBytes) # convert the byte sequence textAsBytes to a string called textString
