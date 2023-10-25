@@ -13,14 +13,14 @@ var
     cmdEvalTwo:string = "\'?"
     cmdExplainOne:string = "Explain why the statement \'"
     cmdExplainTwo:string = "\' is "
-    cmdExplainThree:string = ", in only 8 words."
+    cmdExplainThree:string = ". Parameters: response is maximum of 12 words long."
     textAsBytes: seq[byte] # <-- for converting cstrings to text we can use
 
 # --------- open WebSocket --------
 
 var clientWs = waitFor newWebSocket("ws://127.0.0.1:9002/ws")
-proc webSocketSend(output:string) {.async.} = 
-    await clientWs.send(output)
+proc webSocketSend(output:JsonNode) {.async.} = 
+    await clientWs.send($output)
 
 # ---------------------------------
 
@@ -104,13 +104,19 @@ proc requestCommand(request:string) {.async.} =
         let explainJsonObject = parseJson(explainJsonString.body)
         let explainResult = explainJsonObject["response"].getStr()
 
-        # Format results as an array and send to WebSocket
-        let outputPackage = "[`" & request & "`,`" & evalResult & "`,`" & explainResult & "`]"
-        echo "OUTPUT: " & outputPackage
-        waitFor webSocketSend(outputPackage)
+        # Format results as a JSON array and send to WebSocket
+        let outputPackage = %*[
+            request,
+            evalResult,
+            explainResult
+        ]
+        await webSocketSend(outputPackage)
     else:
-        let outputPackage = "[`" & request & "`,`" & evalResult & "`]"
-        waitFor webSocketSend(outputPackage)
+        let outputPackage = %*[
+            request,
+            evalResult
+        ]
+        await webSocketSend(outputPackage)
 
 ################ ---- ------------------------------ ---- ################
 

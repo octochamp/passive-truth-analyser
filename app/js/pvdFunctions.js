@@ -1,37 +1,22 @@
-async function llmRequest(request) {
-    try {
-        const response = await fetch('http://localhost:11434/api/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: "mistral",
-                prompt: request,
-                stream: "false"
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error:', error);
-        throw error;  // If you want to propagate the error outside
-    }
-}
-
 async function dataHandler(data) {
+    let parsedData = JSON.parse(data);
     console.log("------- Data received: -------")
-    console.log(data);
+    console.log(parsedData);
+    let request = parsedData[0]
+    let evaluation = parsedData[1]
+    let explanation = parsedData[2]
+
+
+
+
+
+
+
 
     
     // Create 3 separate lines for explainString:
     // TODO: DIVIDE THIS BY CHARACTER, 21 CHARACTERS PER LINE
-    let lineWords = explainString.split(/\s+/); // Split the string into words
+    let lineWords = explanation.split(/\s+/); // Split the string into words
 
     let explainString1 = "", explainString2 = "", explainString3 = "";
 
