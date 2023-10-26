@@ -15,41 +15,40 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Generic alert for testing
-async function alert(score, stringOne, stringTwo, stringThree) {
-    await setBgColor(0,0,1);
-    await setColor(1,1,1);
+async function alertHandler(colour, vibrate, text1, text2, lines, explanation) {
+    const { expStr1, expStr2, expStr3, expStr4 } = splitTextIntoLines(explanation);
+    await setBgColor(colour);
+    await setColor(-1);
     await clearScreen();
     await setFontScore();
     await setFontAlign();
-    await drawString(score,"88","34");
-    await drawString(score,"88","78");
-    await vibrate(50);
+    if (lines === 2) {
+        await drawString(text1,"88","34");
+        await drawString(text2,"88","78");
+    } else {
+        await drawString(text1,"88","56");
+    }
+    await bangleVibrate(vibrate);
     await setLCDPower();
     await setFontVector(14);
-    await drawString(stringOne, "88","118");
-    await drawString(stringTwo,"88","134");
-    await drawString(stringThree,"88","150");
-    await delay(3000);
-    await clearScreen();
-}
-
-function alertTest(score, stringOne, stringTwo, stringThree) {
-    alert(score, stringOne, stringTwo, stringThree);
-}
-
-function alertHandler(score, stringOne, stringTwo, stringThree) {
-    if (score) {
-        switch(score) {
-            case"0": 
-                return;
-            
-        }
+    if (expStr4 === '') { // If there are only 3 lines of explanation
+        await drawString(expStr1, "88","118");
+        await drawString(expStr2,"88","134");
+        await drawString(expStr3,"88","150");
+    } else if (expStr3 === '') { // If there are only 2 lines of explanation
+        await drawString(expStr1, "88","126");
+        await drawString(expStr2,"88","142");
+    } else if (expStr2 === '') { // If there is only 1 line of explanation
+        await drawString(expStr1, "88","134");
+    } else { // But if there are 4 lines
+        await drawString(expStr1, "88","116");
+        await drawString(expStr2,"88","128");
+        await drawString(expStr3,"88","140");
+        await drawString(expStr4,"88","152");
+        await delay(3000); // ------ how long to display the alert for (ms)
+        await clearScreen();
     }
-    else {
-        console.log("No score recorded for request")
-        return;
-    }
+    
 }
 
 function startWebSocket() {

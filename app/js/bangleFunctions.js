@@ -35,8 +35,8 @@ async function setColor(r,g,b) {
 }
 
 async function setFontScore() {
-    await Puck.write("g.setFont('Vector:40'); \n");
-    console.log("g.setFont('Vector:40'); \n");
+    await Puck.write("g.setFont('Vector:32'); \n");
+    console.log("g.setFont('Vector:32'); \n");
 }
 
 async function setFontSmall() {
@@ -59,7 +59,7 @@ async function drawString(text, x, y) {
     console.log("g.drawString('" + text + "'," + x + ", " + y + "); \n");
 }
 
-async function vibrate(time) {
+async function bangleVibrate(time) {
     await Puck.write("Bangle.buzz(" + time + "); \n")
     console.log("Bangle.buzz(" + time + "); \n");
 }
