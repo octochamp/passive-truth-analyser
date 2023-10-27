@@ -10,9 +10,12 @@ unset LD_LIBRARY_PATH
 #export LD_LIBRARY_PATH="$DIR/app/lib:${LD_LIBRARY_PATH}"
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/nathan/Documents/RCA-IED/passive-verification-device/app/lib/
 
-# Launch both vad_stream and websocket as concurrent background apps
-$DIR/app/vad_stream --model=$MODELPATH --scorer=$SCORERPATH "$@" &
-$DIR/app/websocket "$@" &
+# Launch vad_stream, websocket and the Ollama server as concurrent background apps
+# $DIR/app/vad_stream --model=$MODELPATH --scorer=$SCORERPATH "$@" & -- old DeepSpeech launch code
+python3 $DIR/app/websocketserver.py "$@" &
+$DIR/app/llmBridge &
+python3 $DIR/app/transcriber.py "$@" &
+
 
 wait
 
