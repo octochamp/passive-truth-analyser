@@ -10,9 +10,10 @@ var
     ollamaPull:string = "curl -X POST http://localhost:11434/api/pull -d '{\"name\": \"llama2:7b\"}'"
     cmdEvalOne:string = "Respond only with a single digit numeral between 0 and 9: On a scale where 0 is totally false and 9 is totally true, how accurate is it to say, \'"
     cmdEvalTwo:string = "\'?"
-    cmdExplainOne:string = "Explain why the statement \'"
+    cmdExplainOne:string = "Explain why this \'"
     cmdExplainTwo:string = "\' is "
-    cmdExplainThree:string = ". Strict parameters: Response is maximum of 10 words. Do not repeat the statement."
+    cmdExplainThree:string = ". Do not echo the statement. Do not use the words \'"
+    cmdExplainFour:string = "\' or \'the statement\'. Limit your response to 5 words."
     textAsBytes: seq[byte] # <-- for converting cstrings to text we can use
 
 # --------- open WebSocket on 127.0.0.1:9002/ws1 for sending to pvdBridge.js --------
@@ -79,29 +80,29 @@ proc requestCommand(request:string) {.async.} =
         "model": "mistral-openorca",
         "stream": false,
         "prompt": cmdEvalOne & request & cmdEvalTwo
-        }
+    }
     var evalResult = llmRequest(payload)
 
-    # Check if evalResult has single-digit numerals
-    # Compile the regex pattern only once for performance
-    let digitPattern = re(r"\d")
-    let nonDigitPattern = re(r"[^\d]")
+    # Strip all non-digit characters
+    let onlyDigitsPattern = re(r"\D")  # Matches non-digit characters
+    evalResult = replace(evalResult, onlyDigitsPattern, "")
 
-    # Check if evalResult has single-digit numerals
-    let foundIndex = evalResult.find(digitPattern)
-    if foundIndex != -1:
-        evalResult = replace(evalResult, nonDigitPattern, "")  # Remove all non-numeric characters
+    # Check if the result is a single numeral
+    if evalResult.len() == 1:
+        echo("No further action required")
     else:
-        evalResult = "X"  # If no numerals found, set to "X"
+        evalResult = "X"  # If no numeral or more than one numeral found, set to "X"
+
+    echo evalResult
     
     # If we have a score then get explanation from LLM and send all to WebSocket. If not, pass `X` to WebSocket.
     if evalResult != "X" :
         let readableEval = makeReadableEval(evalResult)
-        echo "------------Asking: " & cmdExplainOne & request & cmdExplainTwo & readableEval & cmdExplainThree & " ----------------------"
+        echo "------------Asking: " & cmdExplainOne & request & cmdExplainTwo & readableEval & cmdExplainThree & readableEval & cmdExplainFour & " ----------------------"
         let explainPayload = %*{
             "model": "mistral-openorca",
             "stream": false,
-            "prompt": cmdExplainOne & request & cmdExplainTwo & readableEval & cmdExplainThree
+            "prompt": cmdExplainOne & request & cmdExplainTwo & readableEval & cmdExplainThree & readableEval & cmdExplainFour
             }
         let explainResult = llmRequest(explainPayload)
         echo explainResult

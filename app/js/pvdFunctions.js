@@ -60,16 +60,34 @@ function contentBuilder(evaluation) {
             return { colour: "0,0.75,0", vibrate: "10", text1: "Correct", text2: "", lines: 1, lcd:"on" }
         case "9":
             return { colour: "0,1,0", vibrate: "5", text1: "Totally", text2: "accurate", lines: 2, lcd:"on" }
+        default:
+            console.warn("Unexpected evaluation value:", evaluation);
+            return {
+                colour: "1,1,1", // default values
+                vibrate: "80",
+                text1: "Unexpected",
+                text2: "Value",
+                lines: 2,
+                lcd: "on"
+            };
     }
 }
 
 async function dataHandler(data) {
     let parsedData = JSON.parse(data);
     console.log("------- Data received: -------")
-    console.log(parsedData);
+    console.log("Parsed data Evaluation:", parsedData.eval);
+
+//----- IGNORE EMPTY DATA FROM WEBSOCKET -----
+    if (!parsedData.eval) {
+        console.warn("Incomplete data received, ignoring...");
+        return; // exit the function early
+    }
+
     let request = parsedData.request
     let evaluation = parsedData.eval
     let explanation = parsedData.explanation
+    console.log("Evaluation:", evaluation);
 
     if (evaluation === "X") {
         console.log("Request: " + request);
