@@ -26,7 +26,7 @@ def send_transcription_to_server(line):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", default="medium", help="Model to use",
+    parser.add_argument("--model", default="small", help="Model to use",
                         choices=["tiny", "base", "small", "medium", "large"])
     parser.add_argument("--non_english", action='store_true',
                         help="Don't use the english model.")
@@ -34,7 +34,7 @@ def main():
                         help="Energy level for mic to detect.", type=int)
     parser.add_argument("--record_timeout", default=5,
                         help="How real time the recording is in seconds.", type=float)
-    parser.add_argument("--phrase_timeout", default=2,
+    parser.add_argument("--phrase_timeout", default=0,
                         help="How much empty space between recordings before we "
                              "consider it a new line in the transcription.", type=float)
     

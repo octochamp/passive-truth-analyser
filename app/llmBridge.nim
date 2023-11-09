@@ -7,13 +7,14 @@ import json, httpclient
 
 # Build the LLM sentence commands
 var
-    ollamaPull:string = "curl -X POST http://localhost:11434/api/pull -d '{\"name\": \"llama2:7b\"}'"
+    ollamaPull:string = "curl -X POST http://localhost:11434/api/pull -d '{\"name\": \"mistral-openorca\"}'"
     cmdEvalOne:string = "Respond only with a single digit numeral between 0 and 9: On a scale where 0 is totally false and 9 is totally true, how accurate is it to say, \'"
     cmdEvalTwo:string = "\'?"
-    cmdExplainOne:string = "Explain why this \'"
+    cmdExplainOne:string = "Explain why this statement: \'"
     cmdExplainTwo:string = "\' is "
-    cmdExplainThree:string = ". Do not echo the statement. Do not use the words \'"
+    cmdExplainThree:string = ". Do not repeat the statement. Do not use the words \'"
     cmdExplainFour:string = "\' or \'the statement\'. Limit your response to 5 words."
+    cmdExplainSimple:string = "Explain your last answer in fewer than 10 words."
     textAsBytes: seq[byte] # <-- for converting cstrings to text we can use
 
 # --------- open WebSocket on 127.0.0.1:9002/ws1 for sending to pvdBridge.js --------
@@ -66,12 +67,14 @@ proc makeReadableEval(evalResult:string): string =
 
 ################ ---- Proc for when VAD is triggered ---- ################
 
-proc llmRequest(payload: JsonNode): string =
+proc llmRequest(payload: JsonNode): (string, string) =
     var client = newHttpClient()
     client.headers = newHttpHeaders({"Content-Type": "application/json"})  # set content type to JSON
     let jsonString = client.post("http://localhost:11434/api/generate", $(payload))
     let jsonObject = parseJson(jsonString.body)
-    return jsonObject["response"].getStr()
+    let jsonResponse = jsonObject["response"].getStr()
+    let jsonContext = jsonObject["context"].getStr()
+    return (jsonResponse, jsonContext)
 
 proc requestCommand(request:string) {.async.} =
     # Get evaluation score from LLM
@@ -81,7 +84,7 @@ proc requestCommand(request:string) {.async.} =
         "stream": false,
         "prompt": cmdEvalOne & request & cmdEvalTwo
     }
-    var evalResult = llmRequest(payload)
+    var (evalResult, evalContext) = llmRequest(payload)
 
     # Strip all non-digit characters
     let onlyDigitsPattern = re(r"\D")  # Matches non-digit characters
@@ -89,7 +92,7 @@ proc requestCommand(request:string) {.async.} =
 
     # Check if the result is a single numeral
     if evalResult.len() == 1:
-        echo("No further action required")
+        echo("(Result is a single numeral:)")
     else:
         evalResult = "X"  # If no numeral or more than one numeral found, set to "X"
 
@@ -98,20 +101,22 @@ proc requestCommand(request:string) {.async.} =
     # If we have a score then get explanation from LLM and send all to WebSocket. If not, pass `X` to WebSocket.
     if evalResult != "X" :
         let readableEval = makeReadableEval(evalResult)
-        echo "------------Asking: " & cmdExplainOne & request & cmdExplainTwo & readableEval & cmdExplainThree & readableEval & cmdExplainFour & " ----------------------"
+        echo "------------Asking: " & cmdExplainSimple & " ----------------------"
         let explainPayload = %*{
             "model": "mistral-openorca",
             "stream": false,
             "prompt": cmdExplainOne & request & cmdExplainTwo & readableEval & cmdExplainThree & readableEval & cmdExplainFour
             }
-        let explainResult = llmRequest(explainPayload)
-        echo explainResult
+        let (explainResponse, explainContext) = llmRequest(explainPayload)
+        echo explainResponse
+        echo ""
 
         # Format results as a JSON array and send to WebSocket
         let outputPackage = %*{
             "request": request,
             "eval": evalResult,
-            "explanation": explainResult
+            "explanation": explainResponse,
+            "context": evalContext
         }
         await webSocketSend(outputPackage)
         

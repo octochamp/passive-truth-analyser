@@ -2,11 +2,11 @@
 async function setLCD(onOff) {
     if (onOff === "on") {
         await Puck.write("Bangle.setLCDPower(1); \n");
-        await Puck.write("Bangle.setLCDBrightness(1)");
+        await Puck.write("Bangle.setLCDBrightness(1); \n");
         //console.log("Bangle.setLCDPower(1); \n");
     } else {
         await Puck.write("Bangle.setLCDPower(1); \n");
-        await Puck.write("Bangle.setLCDBrightness(0.1)");
+        await Puck.write("Bangle.setLCDBrightness(0.1); \n");
     }
 }
 
@@ -16,7 +16,7 @@ async function setLCDTimeout(time) {
 }
 
 async function setFontAlign() {
-    await Puck.write("g.setFontAlign(0,0,0) \n");
+    await Puck.write("g.setFontAlign(0,0,0); \n");
     //console.log("g.setFontAlign(0,0,0) \n");
 }
 
@@ -30,8 +30,8 @@ async function clearScreenAll() {
     //console.log("g.clear(1); \n");
 }
 
-async function setBgColor(r,g,b) {
-    await Puck.write("g.setBgColor(" + r + "," + g + "," + b +"); \n");
+async function setBgColor(colour) {
+    await Puck.write("g.setBgColor(" + colour +"); \n");
     //console.log("g.setBgColor(" + r + "," + g + "," + b +"); \n");
 }
 
