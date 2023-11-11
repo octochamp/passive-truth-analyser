@@ -41,17 +41,17 @@ async function setColor(r,g,b) {
 }
 
 async function setFontScore() {
-    await Puck.write("g.setFont('Vector:28'); \n");
+    await Puck.write("g.setFont('Vector:24'); \n");
     //console.log("g.setFont('Vector:32'); \n");
 }
 
 async function setFontSmall() {
-    await Puck.write("g.setFont('Vector:16'); \n");
+    await Puck.write("g.setFont('Vector:14'); \n");
     //console.log("g.setFont('Vector:16'); \n");
 }
 
 async function setFontBig() {
-    await Puck.write("g.setFont('12x20:3'); \n");
+    await Puck.write("g.setFont('Vector:14'); \n");
     //console.log("g.setFont('12x20:3'); \n");
 }
 
@@ -62,6 +62,7 @@ async function setFontVector(px) {
 
 async function drawString(text, x, y) {
     await Puck.write("g.drawString('" + text + "'," + x + ", " + y + "); \n");
+    await delay(100);
     //console.log("g.drawString('" + text + "'," + x + ", " + y + "); \n");
 }
 

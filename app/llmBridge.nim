@@ -7,14 +7,13 @@ import json, httpclient
 
 # Build the LLM sentence commands
 var
-    ollamaPull:string = "curl -X POST http://localhost:11434/api/pull -d '{\"name\": \"mistral-openorca\"}'"
-    cmdEvalOne:string = "Respond only with a single digit numeral between 0 and 9: On a scale where 0 is totally false and 9 is totally true, how accurate is it to say, \'"
+    ollamaModel:string = "mistral-openorca" # model used for evaluation
+    ollamaModelAlt:string = "mistral-openorca" # model used for explanation
+    cmdEvalOne:string = "Where 0 is totally false and 9 is totally true, how accurate is it to say, \'"
     cmdEvalTwo:string = "\'?"
     cmdExplainOne:string = "Explain why this statement: \'"
     cmdExplainTwo:string = "\' is "
-    cmdExplainThree:string = ". Do not repeat the statement. Do not use the words \'"
-    cmdExplainFour:string = "\' or \'the statement\'. Limit your response to 5 words."
-    cmdExplainSimple:string = "Explain your last answer in fewer than 10 words."
+    cmdExplainThree:string = ". Limit response to 5 words.'"
     textAsBytes: seq[byte] # <-- for converting cstrings to text we can use
 
 # --------- open WebSocket on 127.0.0.1:9002/ws1 for sending to pvdBridge.js --------
@@ -74,14 +73,16 @@ proc llmRequest(payload: JsonNode): (string, string) =
     let jsonObject = parseJson(jsonString.body)
     let jsonResponse = jsonObject["response"].getStr()
     let jsonContext = jsonObject["context"].getStr()
+    echo jsonResponse
     return (jsonResponse, jsonContext)
 
 proc requestCommand(request:string) {.async.} =
     # Get evaluation score from LLM
     echo "Asking: " & cmdEvalOne & request & cmdEvalTwo
     let payload = %*{
-        "model": "mistral-openorca",
+        "model": ollamaModel,
         "stream": false,
+        "system": "You can only respond only using one of these single-digit numbers: 0 1 2 3 4 5 6 7 8 9 ",
         "prompt": cmdEvalOne & request & cmdEvalTwo
     }
     var (evalResult, evalContext) = llmRequest(payload)
@@ -101,11 +102,12 @@ proc requestCommand(request:string) {.async.} =
     # If we have a score then get explanation from LLM and send all to WebSocket. If not, pass `X` to WebSocket.
     if evalResult != "X" :
         let readableEval = makeReadableEval(evalResult)
-        echo "------------Asking: " & cmdExplainSimple & " ----------------------"
+        echo "------------Asking: " & cmdExplainOne & request & cmdExplainTwo & readableEval & cmdExplainThree & " --"
         let explainPayload = %*{
-            "model": "mistral-openorca",
+            "model": ollamaModelAlt,
             "stream": false,
-            "prompt": cmdExplainOne & request & cmdExplainTwo & readableEval & cmdExplainThree & readableEval & cmdExplainFour
+            "system": "\'You can only respond in a single concise sentence of no more than 5 words.\'",
+            "prompt": cmdExplainOne & request & cmdExplainTwo & readableEval & cmdExplainThree
             }
         let (explainResponse, explainContext) = llmRequest(explainPayload)
         echo explainResponse
@@ -116,7 +118,6 @@ proc requestCommand(request:string) {.async.} =
             "request": request,
             "eval": evalResult,
             "explanation": explainResponse,
-            "context": evalContext
         }
         await webSocketSend(outputPackage)
         
@@ -142,8 +143,11 @@ proc handleIncomingMessages(ws: WebSocket) {.async.} =
         if jsonObj.hasKey("transcription"):
             let transcription = jsonObj["transcription"].getStr()
             echo "Received transcription from server: ", transcription
-            let sanitisedTextString = transcription.replace("'", "\\'")  # Escape single quotes
-            await requestCommand(sanitisedTextString)
+            if transcription != "Thank you." : # awkward fixes for transcriber.py sometimes interpreting
+                if transcription != "Bye." :   # nonverbal noises as either "thank you" or "bye"
+                    if transcription != "Thanks for watching!" : # or sometimes "Thanks for watching!" lol
+                        let sanitisedTextString = transcription.replace("'", "\\'")  # Escape single quotes
+                        await requestCommand(sanitisedTextString)
 
 # Main procedure
 proc main() {.async.} =

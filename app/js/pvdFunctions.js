@@ -41,25 +41,25 @@ function splitTextIntoLines(explanation) {
 function contentBuilder(evaluation) {
     switch(evaluation) {
         case "0":
-            return { colour: "1,0,0", vibrate: "1280", text1: "Totally", text2: "inaccurate", lines: 2, lcd:"on" }
+            return { colour: "1,0,0", vibrate: "1280", text1: "TOTALLY", text2: "INACCURATE", lines: 2, lcd:"on" }
         case "1":
-            return { colour: "0.75,0,0", vibrate: "640", text1: "Incorrect", text2: "", lines: 1, lcd:"on" }
+            return { colour: "0.75,0,0", vibrate: "640", text1: "INCORRECT", text2: "", lines: 1, lcd:"on" }
         case "2":
-            return { colour: "0.5,0,0.25", vibrate: "320", text1: "Seems", text2: "wrong", lines: 2, lcd:"on" }
+            return { colour: "0.5,0,0.25", vibrate: "320", text1: "SEEMS", text2: "WRONG", lines: 2, lcd:"on" }
         case "3":
-            return { colour: "0.25,0,0.5", vibrate: "160", text1: "Sketchy", text2: "", lines: 1, lcd:"on" }
+            return { colour: "0.25,0,0.5", vibrate: "160", text1: "FEELS", text2: "SKETCHY", lines: 2, lcd:"on" }
         case "4":
-            return { colour: "0,0,1", vibrate: "80", text1: "Not", text2: "sure", lines: 2, lcd:"on" }
+            return { colour: "0,0,1", vibrate: "80", text1: "UNSURE", text2: "", lines: 1, lcd:"on" }
         case "5":
-            return { colour: "0,0,1", vibrate: "80", text1: "Ambiguous", text2: "", lines: 1, lcd:"on" }
+            return { colour: "0,0,1", vibrate: "80", text1: "AMBIGUOUS", text2: "", lines: 1, lcd:"on" }
         case "6":
-            return { colour: "0,0.25,0.5", vibrate: "40", text1: "Maybe", text2: "", lines: 1, lcd:"on" }
+            return { colour: "0,0.25,0.5", vibrate: "40", text1: "MAYBE", text2: "", lines: 1, lcd:"on" }
         case "7":
-            return { colour: "0,0.5,0.25", vibrate: "20", text1: "Seems", text2: "right", lines: 2, lcd:"on" }
+            return { colour: "0,0.5,0.25", vibrate: "20", text1: "SEEMS", text2: "RIGHT", lines: 2, lcd:"on" }
         case "8":
-            return { colour: "0,0.75,0", vibrate: "10", text1: "Correct", text2: "", lines: 1, lcd:"on" }
+            return { colour: "0,0.75,0", vibrate: "10", text1: "CORRECT", text2: "", lines: 1, lcd:"on" }
         case "9":
-            return { colour: "0,1,0", vibrate: "5", text1: "Totally", text2: "accurate", lines: 2, lcd:"on" }
+            return { colour: "0,1,0", vibrate: "5", text1: "TOTALLY", text2: "ACCURATE", lines: 2, lcd:"on" }
         default:
             console.warn("Unexpected evaluation value:", evaluation);
             return {
