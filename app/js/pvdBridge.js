@@ -15,8 +15,11 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function alertHandler(colour, vibrateTime, text1, text2, lines, lcd, explanation) {
+async function alertHandler(colour, vibrateTime, text1, text2, lines, lcd, evaluation, explanation) {
     let expStr1, expStr2, expStr3, expStr4
+    console.log(evaluation);
+    let alertSound = new Audio("../audio/" + evaluation + ".wav");
+    console.log("../audio/" + evaluation + ".wav")
     if (explanation) { // if there's an explanation, split it into lines
         const splitResult = splitTextIntoLines(explanation);
         expStr1 = splitResult.expStr1;
@@ -45,6 +48,7 @@ async function alertHandler(colour, vibrateTime, text1, text2, lines, lcd, expla
     }
     await setFontSmall();
     await setLCD(lcd);
+    alertSound.play();
     if (expStr4 === '') { // If there are only 3 lines of explanation
         await drawString(expStr1,"88","118");
         await drawString(expStr2,"88","134");

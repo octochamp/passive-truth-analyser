@@ -92,7 +92,7 @@ async function dataHandler(data) {
     if (evaluation === "X") {
         console.log("Request: " + request);
         console.log("Evaluation: " + evaluation);
-        explanation = "||||||||||||||||||||||||||||||||||||||||"
+        explanation = "..."
         let content = {
             colour: "1,0.25,0.9",
             vibrate: "1",
@@ -101,7 +101,7 @@ async function dataHandler(data) {
             lines: 2,
             lcd: "off"
         }
-        alertHandler(content.colour, content.vibrate, content.text1, content.text2, content.lines, content.lcd, explanation);
+        alertHandler(content.colour, content.vibrate, content.text1, content.text2, content.lines, content.lcd, evaluation, explanation);
     } else {
         console.log("Request: " + request);
         console.log("Evaluation: " + evaluation);
@@ -114,7 +114,7 @@ async function dataHandler(data) {
             console.log(expStr4);
         }
         let content = contentBuilder(evaluation)
-        alertHandler(content.colour, content.vibrate, content.text1, content.text2, content.lines, content.lcd, explanation);
+        alertHandler(content.colour, content.vibrate, content.text1, content.text2, content.lines, content.lcd, evaluation, explanation);
     }
 }
 
