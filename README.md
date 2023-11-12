@@ -3,11 +3,11 @@ A prototype offline local wearable device to analyse factual statements in real-
 
 ## Prerequisites
 - [Ollama](https://ollama.ai) + [Mistral](https://mistral.ai/)-[OpenOrca](https://huggingface.co/Open-Orca/Mistral-7B-OpenOrca) _(pull the mistral-openorca model before first run)_
-- Linux or Mac OS (not tested) because Ollama isn't on Windows yet
+- Linux or Mac OS (not tested) only, at time of writing there's no Windows version of Ollama
 - Python and the dependencies for Whisper AI, as per [this](https://github.com/davabase/whisper_real_time) just run `pip install -r requirements.txt`
 - [FFmpeg](https://ffmpeg.org/)
 - [Nim](https://nim-lang.org/install.html) (Nim is only used because in earlier versions it used to run the Mozilla DeepSpeech model. All of its functions could be really done in one of the python scripts or in js. I hate Nim and hope to never have to use it again)
-    - While we're at it, probably no need for two separate python scripts, and transcriber.py could also host the websockets? but uhh here we are
+    - While we're at it, probably no need for two separate python scripts, and transcriber.py could also host the websockets? but uhh here we are, I can't be bothered to learn how to make something like this thread properly
 - a [Bangle.js](https://banglejs.com/) device. Could easily write a module that instead displays in a browser etc though
 - a machine with enough VRAM to run both Whisper AI and a ~7B parameter LLM. Theoretically one of them could run off CPU instead though
 
@@ -16,9 +16,9 @@ A prototype offline local wearable device to analyse factual statements in real-
 
 ## Usage
 1. Build llmBridge.nim with `nim c -f -d:release --threads:on ./app/llmBridge.nim`
-1. Launch Ollama server with `ollama serve`
+1. Pull the Mistral-OpenOrca LLM model: `ollama pull mistral-openorca`
 1. Launch websocket: `python3 app/websocketserver.py`
+1. Open index.html in Web-Bluetooth compatible browser (Chrome, unfortunately)
+1. Connect to Bangle.js
 1. Launch transcriber: `python3 app/transcriber.py`
 1. Launch llmBridge: `app/llmBridge`
-1. Open index.html in Web-Bluetooth compatible browser (Chrome, basically)
-1. Connect to Bangle.js
