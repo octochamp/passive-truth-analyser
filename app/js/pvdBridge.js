@@ -41,10 +41,7 @@ async function alertHandler(colour, vibrateTime, text1, text2, lines, lcd, evalu
     if (lines === 2) {
         await drawString(text1,"88","36");
         await drawString(text2,"88","70");
-        await drawString(text1,"88","36");
-        await drawString(text2,"88","70");
     } else {
-        await drawString(text1,"88","56");
         await drawString(text1,"88","56");
     }
     await setFontSmall();
@@ -53,28 +50,19 @@ async function alertHandler(colour, vibrateTime, text1, text2, lines, lcd, evalu
         await drawString(expStr1,"88","118");
         await drawString(expStr2,"88","134");
         await drawString(expStr3,"88","150");
-        await drawString(expStr1,"88","118");
-        await drawString(expStr2,"88","134");
-        await drawString(expStr3,"88","150");
-        await drawString(expStr1,"88","118");
-        await drawString(expStr2,"88","134");
-        await drawString(expStr3,"88","150");
+        // repeat it in case lines are missed
         await drawString(expStr1,"88","118");
         await drawString(expStr2,"88","134");
         await drawString(expStr3,"88","150");
     } else if (expStr3 === '') { // If there are only 2 lines of explanation
         await drawString(expStr1, "88","126");
         await drawString(expStr2,"88","142");
-        await drawString(expStr1, "88","126");
-        await drawString(expStr2,"88","142");
-        await drawString(expStr1, "88","126");
-        await drawString(expStr2,"88","142");
+        // repeat
         await drawString(expStr1, "88","126");
         await drawString(expStr2,"88","142");
     } else if (expStr2 === '') { // If there is only 1 line of explanation
         await drawString(expStr1, "88","134");
-        await drawString(expStr1, "88","134");
-        await drawString(expStr1, "88","134");
+        // repeat
         await drawString(expStr1, "88","134");
     } else if (expStr1 === '') { // if there are 0 lines of explanation
         console.log("no explanation");
@@ -83,14 +71,7 @@ async function alertHandler(colour, vibrateTime, text1, text2, lines, lcd, evalu
         await drawString(expStr2,"88","125");
         await drawString(expStr3,"88","143");
         await drawString(expStr4,"88","161");
-        await drawString(expStr1, "88","107");
-        await drawString(expStr2,"88","125");
-        await drawString(expStr3,"88","143");
-        await drawString(expStr4,"88","161");
-        await drawString(expStr1, "88","107");
-        await drawString(expStr2,"88","125");
-        await drawString(expStr3,"88","143");
-        await drawString(expStr4,"88","161");
+        // repeat
         await drawString(expStr1, "88","107");
         await drawString(expStr2,"88","125");
         await drawString(expStr3,"88","143");
