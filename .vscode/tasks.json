@@ -4,16 +4,6 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build vad_stream",
-            "type": "shell",
-            "command": "nim c -f -d:release --threads:on /home/nathan/Documents/RCA-IED/passive-verification-device/app/vad_stream.nim",
-            "problemMatcher": [],
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            }
-        },
-        {
             "label": "build llmBridge",
             "type": "shell",
             "command": "nim c -f -d:release --threads:on /home/nathan/Documents/RCA-IED/passive-verification-device/app/llmBridge.nim",
@@ -23,25 +13,5 @@
                 "isDefault": true
             }
         },
-        {
-            "label": "build websocket 1",
-            "type": "shell",
-            "command": "nim c -f -d:release /home/nathan/Documents/RCA-IED/passive-verification-device/app/websocket1.nim",
-            "problemMatcher": [],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "build websocket 2",
-            "type": "shell",
-            "command": "nim c -f -d:release /home/nathan/Documents/RCA-IED/passive-verification-device/app/websocket2.nim",
-            "problemMatcher": [],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        }
     ]
 }
