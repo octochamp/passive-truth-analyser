@@ -4,7 +4,7 @@ A fully-functioning application built as a piece of speculative design, which an
 ![Screenshot of Sparring Partners](/images/Screenshot.png)
 
 ## Prerequisites
-- [Ollama](https://ollama.ai) + [Mistral](https://mistral.ai/)-[OpenOrca](https://huggingface.co/Open-Orca/Mistral-7B-OpenOrca) _(pull the mistral-openorca model before first run)_
+- [Ollama](https://ollama.ai) + [Mistral](https://mistral.ai/)-[OpenOrca](https://huggingface.co/Open-Orca/Mistral-7B-OpenOrca)
 - A modern Linux distro, at time of writing there's no Windows version of Ollama and Mac OS is untested.
 - Python and the dependencies for Whisper AI, as per [this](https://github.com/davabase/whisper_real_time) just run `pip install -r requirements.txt`
 - [FFmpeg](https://ffmpeg.org/)
@@ -19,5 +19,5 @@ A fully-functioning application built as a piece of speculative design, which an
 ## Usage
 1. Build llmBridge with `nim c -f -d:release --threads:on ./app/llmBridge.nim`
 1. Pull the Mistral-OpenOrca LLM model: `ollama pull mistral-openorca`
-1. Run 'launch' (you may need to `chmod +x ./launch` in a terminal first), this will open a google-chrome window plus terminal windows running 
+1. Run 'launch' (you may need to `chmod +x ./launch` in a terminal first), this will open a google-chrome window plus terminal windows running transcriber.py, websocketserver.py and llmBridge
 1. Connect to Bangle.js
