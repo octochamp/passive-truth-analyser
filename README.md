@@ -10,7 +10,7 @@ A fully-functioning application built as a piece of speculative design, which an
 - [FFmpeg](https://ffmpeg.org/)
 - [Nim](https://nim-lang.org/install.html) (Nim is only used because in earlier versions it used to run the Mozilla DeepSpeech model and there was a Nim app I could start building from. All of that code is gone now but Nim remains. All of its functions could/should be really done in one of the python scripts or maybe even in js. I hate Nim and hope to never have to use it again)
 - Google Chrome, because it's the only browser to currently support Web Bluetooth
-- a [Bangle.js](https://banglejs.com/) device, however if you don't have one then you'll still see the results in your terminal windows.
+- a [Bangle.js](https://banglejs.com/) device, but you can see results in browser without one.
 - a machine with enough VRAM + GPU power to run both Whisper AI and a ~7B parameter LLM. Theoretically with some rewriting one of them could run off CPU instead though!
 
 ## Notes
