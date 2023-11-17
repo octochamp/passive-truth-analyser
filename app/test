@@ -7,7 +7,7 @@ if [ $# -eq 0 ]; then
 fi
 
 # Run the command with the provided argument
-result=$(ollama run mistral-openorca "$1")
+result=$(ollama run mistral-openorca-eval "Where 0 is totally false and 9 is totally true, how accurate is it to say, '$1'?")
 
 # Display the result
 # echo "Result of 'ollama run mistral $1':"

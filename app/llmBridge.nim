@@ -30,13 +30,6 @@ proc webSocketSend(output: JsonNode) {.async.} =
         if clientWs != nil:
             clientWs.close()
 
-
-# ------- Pull the Ollama model, in case it's not been downloaded
-# ~~~~~~~~~~~ TODO Build in something to check the local models (https://github.com/jmorganca/ollama/blob/main/docs/api.md#list-local-models)
-# ~~~~~~~~~~~ and only pull if model isn't present
-
-# echo execCmdEx(ollamaPull)
-
 # Proc to turn the number rankings the LLM provides into readable forms it can then evaluate in a sentence
 proc makeReadableEval(evalResult:string): string =
     let evalInt = parseInt(evalResult)
@@ -143,11 +136,8 @@ proc handleIncomingMessages(ws: WebSocket) {.async.} =
         if jsonObj.hasKey("transcription"):
             let transcription = jsonObj["transcription"].getStr()
             echo "Received transcription from server: ", transcription
-            if transcription != "Thank you." : # awkward fixes for transcriber.py sometimes interpreting
-                if transcription != "Bye." :   # nonverbal noises as either "thank you" or "bye"
-                    if transcription != "Thanks for watching!" : # or sometimes "Thanks for watching!" lol
-                        let sanitisedTextString = transcription.replace("'", "\\'")  # Escape single quotes
-                        await requestCommand(sanitisedTextString)
+            let sanitisedTextString = transcription.replace("'", "\\'")  # Escape single quotes
+            await requestCommand(sanitisedTextString)
 
 # Main procedure
 proc main() {.async.} =

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Get current dir
+CURRENT_DIR=(pwd)
+
+HTML_FILE="file://$CURRENT_DIR/app/index.html"
+
+# Launch the first command in a new terminal window
+gnome-terminal -- python3 $CURRENT_DIR/app/websocketserver.py
+
+# Launch the second command in a new terminal window
+gnome-terminal -- python3 $CURRENT_DIR/app/transcriber.py
+
+# Launch the third command in a new terminal window
+gnome-terminal -- $CURRENT_DIR/app/llmBridge
+
+google-chrome "$HTML_FILE"

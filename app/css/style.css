@@ -1,1 +1,124 @@
-*/css/*
+@font-face {
+    font-family: 'Sono';
+    src: url('/fonts/Sono-VariableFont_MONO\,wght.ttf') format('truetype');
+    font-weight: 100 900;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: rgb(228, 156, 108);
+    color: #2c2c2c;
+    font-family: 'Sono', sans-serif;
+}
+
+h1 {
+    font-size: 3em;
+    font-weight: 100;
+}
+
+h2 {
+    font-size: 2em;
+    font-weight: 100;
+}
+
+a {
+    color:#4e4e4e;
+    text-decoration: none;
+}
+
+a:hover {
+    color: black;
+    text-decoration: 1px underline wavy red;
+}
+
+header, footer {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.2);
+    text-align: center;
+    padding: 10px 0 10px 0;
+}
+
+#main-content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    height: 100%;
+}
+
+#left-block, #middle-block, #right-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally in each column */
+    align-self: stretch; /* Align the columns to the top */
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#left-block {
+    flex: 0 0 25%;
+}
+
+#middle-block {
+    flex: 0 0 25%;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+#right-block {
+    flex: 0 0 50%;
+    height: 100%;
+}
+
+.column-header {
+    width: 80%;
+    text-align: center;
+    padding: 10px;
+    font-size: 1.2em;
+
+    border-radius: 5px;
+    margin-bottom: 20px; /* Space below the header */
+}
+
+/* Styling for buttons */
+button {
+    padding: 25px 30px; /* Large padding for bigger button */
+    font-family: Sono;
+    font-weight: 600;
+    font-size: 1.2em; /* Larger font size */
+    cursor: pointer; /* Cursor changes to pointer on hover */
+    margin: 10px; /* Margin around the button */
+    border: 1px solid #242424;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white; /* Text color */
+    border-radius: 5px; /* Rounded corners */
+    width: 80%;
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Darker background on hover */
+    color: black;
+}
+
+#startButton {
+    font-size: 0.7em;
+    padding: 12px 15px; 
+
+}
+
+#consoleLog {
+    width: 90%;
+    max-height: 500px;
+    overflow-y: auto; /* Adds vertical scrollbar */
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid #ddd; /* Border for the console box */
+    padding: 10px; /* Padding inside the console box */
+    margin:0 20% 0 20%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Optional: adds shadow for aesthetics */
+    font-family: Sono;
+    font-feature-settings: 'MONO';
+    border-radius: 5px;
+}

@@ -75,8 +75,8 @@ function contentBuilder(evaluation) {
 
 async function dataHandler(data) {
     let parsedData = JSON.parse(data);
-    console.log("------- Data received: -------")
-    console.log("Parsed data Evaluation:", parsedData.eval);
+    console.log("");
+    console.log("------- New data received, beginning handler process");
 
 //----- IGNORE EMPTY DATA FROM WEBSOCKET -----
     if (!parsedData.eval) {
@@ -87,11 +87,9 @@ async function dataHandler(data) {
     let request = parsedData.request
     let evaluation = parsedData.eval
     let explanation = parsedData.explanation
-    console.log("Evaluation:", evaluation);
+    console.log("Statement: '" + request + "'");
 
     if (evaluation === "X") {
-        console.log("Request: " + request);
-        console.log("Evaluation: " + evaluation);
         explanation = "..."
         let content = {
             colour: "1,0.25,0.9",
@@ -103,48 +101,10 @@ async function dataHandler(data) {
         }
         alertHandler(content.colour, content.vibrate, content.text1, content.text2, content.lines, content.lcd, evaluation, explanation);
     } else {
-        console.log("Request: " + request);
-        console.log("Evaluation: " + evaluation);
         if (explanation) {
-            console.log("Explanation:");
             const { expStr1, expStr2, expStr3, expStr4 } = splitTextIntoLines(explanation);
-            console.log(expStr1);
-            console.log(expStr2);
-            console.log(expStr3);
-            console.log(expStr4);
         }
         let content = contentBuilder(evaluation)
         alertHandler(content.colour, content.vibrate, content.text1, content.text2, content.lines, content.lcd, evaluation, explanation);
-    }
-}
-
-async function testDataHandler(request, evaluation, explanation) {
-    console.log("Evaluation: " + evaluation);
-    console.log("Explanation: " + explanation);
-
-    if (evaluation === "X") {
-        console.log("Request: " + request);
-        console.log("Evaluation: " + evaluation);
-        explanation = "||||||||||||||||||||||||||||||||||||||||"
-        let content = {
-            colour: "1,0.25,0.9",
-            vibrate: "1",
-            text1: "",
-            text2: "Listening",
-            lines: 2,
-            lcd: "off"
-        }
-        alertHandler(content.colour, content.vibrate, content.text1, content.text2, content.lines, content.lcd, explanation);
-    } else {
-        console.log("Request: " + request);
-        console.log("Evaluation: " + evaluation);
-        console.log("Explanation:");
-        const { expStr1, expStr2, expStr3, expStr4 } = splitTextIntoLines(explanation);
-        console.log(expStr1);
-        console.log(expStr2);
-        console.log(expStr3);
-        console.log(expStr4);
-        let content = contentBuilder(evaluation)
-        alertHandler(content.colour, content.vibrate, content.text1, content.text2, content.lines, content.lcd, explanation);
     }
 }

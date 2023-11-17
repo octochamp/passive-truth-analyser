@@ -4,24 +4,38 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>PVD AI => PVD Bridge</title>
+        <title>Passive Verification Device</title>
         <link rel="stylesheet" href="css/style.css">
+        <link rel="icon" href="/images/favicon.png" sizes="192x192">
         <script src="js/pvdBridge.js"></script>
         <script src="js/bangleFunctions.js"></script>
         <script src="js/pvdFunctions.js"></script>
         <script src="js/puck.js"></script>
     </head>
     <body>
-        <h1><strong>Passive Verification Device</strong> AI => PVD bridge v2</h1>
-        <br>
-        <button id="connectButton" onclick="connectBangle()">Connect Bangle.js</button>
-        <button id="startWebSocket" onclick="startWebSocket()">Initiate WebSocket Listening</button>
-        <br>
-        <button id="testButton1" onclick="alertHandler('0,1,0', '250', 'FEELS', 'NICE', '2', '1', '9', 'this is just a test, thanks')">Test alert</button>
-        <br>
-        <button onclick="setLCDPower('1')">Turn on LCD</button>
-        <button onclick="clearScreenAll()">Reset All</button>
-        <button onclick="clearScreen()">Clear screen</button>
-
+        <header>
+        <h1>Sparring Partners</h1>
+        <h2>Passive Verification Device Bridge</h2>
+        </header>
+        <div id="main-content">
+            <div id="left-block">
+                <div class="column-header">Initialisation</div>
+                <button id="connectButton" onclick="connectBangle()">Start</button>
+                <button id="startButton" onclick="startWebSocket()">Start without Bangle.js device</button>
+            </div>
+            <div id="middle-block">
+                <div class="column-header">Testing</div>
+                <button id="testButton1" onclick="alertHandler('0,1,0', '250', 'FEELS', 'NICE', '2', '1', '9', 'this is just a test, thanks')">Alert test</button>
+                <button onclick="clearScreenAll()">Reset Screen</button>
+            </div>
+            <div id="right-block">
+                <div class="column-header">Console</div>
+                <div id="consoleLog"></div>
+                <script src="js/console.js"></script>
+            </div>
+        </div>
+        <footer>
+            November 2023 | <a href="https://grpahicdeisgn.com">Nathan</a> <a href="https://instagram.com/nathandavidsmith">David</a> <a href="http://nathandavidsmith.co.uk">Smith</a> | <a href="https://github.com/octochamp/passive-verification-device">https://github.com/octochamp/passive-verification-device</a>
+        </footer>
     </body>
 </html>

@@ -30,11 +30,11 @@ def main():
                         choices=["tiny", "base", "small", "medium", "large"])
     parser.add_argument("--non_english", action='store_true',
                         help="Don't use the english model.")
-    parser.add_argument("--energy_threshold", default=1000,
+    parser.add_argument("--energy_threshold", default=1600,
                         help="Energy level for mic to detect.", type=int)
-    parser.add_argument("--record_timeout", default=6,
+    parser.add_argument("--record_timeout", default=12,
                         help="How real time the recording is in seconds.", type=float)
-    parser.add_argument("--phrase_timeout", default=0,
+    parser.add_argument("--phrase_timeout", default=1,
                         help="How much empty space between recordings before we "
                              "consider it a new line in the transcription.", type=float)
     
@@ -51,6 +51,11 @@ def main():
     recorder.energy_threshold = args.energy_threshold
     # Definitely do this, dynamic energy compensation lowers the energy threshold dramatically to a point where the SpeechRecognizer never stops recording.
     recorder.dynamic_energy_threshold = False
+
+    # Minimum length for a transcription, anything shorter will be ignored (chars)
+    min_length = 12
+    # Common phrases that the transcriber interprets unwanted noise and sound as / phrases to be ignored:
+    phrases_to_ignore = {"Thank you.", "Thank you!", "Thanks for watching!", "Thanks for watching.", "Bye.", "Bye!", "See you next time.", "Thank you for your participation.", "See you next time!", "Thank you for your participation!"}
 
     # Just use the default microphone at a given sample rate
     source = sr.Microphone(sample_rate=16000)
@@ -116,6 +121,10 @@ def main():
                 # Read the transcription.
                 result = audio_model.transcribe(temp_file, fp16=torch.cuda.is_available())
                 text = result['text'].strip()
+
+                # Check if the transcription is too short (defined by min_length) or in the list of phrases_to_ignore
+                if len(text) < min_length or text in phrases_to_ignore:
+                    continue  # Skip this transcription
 
                 # If we detected a pause between recordings, add a new item to our transcription.
                 # Otherwise edit the existing one.

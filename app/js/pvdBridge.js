@@ -17,17 +17,18 @@ function delay(ms) {
 
 async function alertHandler(colour, vibrateTime, text1, text2, lines, lcd, evaluation, explanation) {
     let expStr1, expStr2, expStr3, expStr4
-    console.log(evaluation);
     let alertSound = new Audio("../audio/" + evaluation + ".wav");
-    console.log("../audio/" + evaluation + ".wav")
     alertSound.play();
+    console.log("🎵️ Evaluation score: " + evaluation)
     if (explanation) { // if there's an explanation, split it into lines
+        console.log("ℹ️ Explanation: " + explanation)
         const splitResult = splitTextIntoLines(explanation);
         expStr1 = splitResult.expStr1;
         expStr2 = splitResult.expStr2;
         expStr3 = splitResult.expStr3;
         expStr4 = splitResult.expStr4;
     } else { // if no explanation, then just empty strings
+        console.log("No explanation")
         expStr1 = expStr2 = expStr3 = expStr4 = ""; // default values
     }
     Puck.write(` 
@@ -50,55 +51,43 @@ async function alertHandler(colour, vibrateTime, text1, text2, lines, lcd, evalu
         await drawString(expStr1,"88","118");
         await drawString(expStr2,"88","134");
         await drawString(expStr3,"88","150");
-        // repeat it in case lines are missed
-/*         await drawString(expStr1,"88","118");
-        await drawString(expStr2,"88","134");
-        await drawString(expStr3,"88","150"); */
+
     } else if (expStr3 === '') { // If there are only 2 lines of explanation
         await drawString(expStr1, "88","126");
         await drawString(expStr2,"88","142");
-        // repeat
-/*         await drawString(expStr1, "88","126");
-        await drawString(expStr2,"88","142"); */
+
     } else if (expStr2 === '') { // If there is only 1 line of explanation
         await drawString(expStr1, "88","134");
-        // repeat
-/*         await drawString(expStr1, "88","134"); */
+
     } else if (expStr1 === '') { // if there are 0 lines of explanation
-        console.log("no explanation");
+        console.log("-");
     } else { // But if there are 4 lines
         await drawString(expStr1, "88","107");
         await drawString(expStr2,"88","125");
         await drawString(expStr3,"88","143");
         await drawString(expStr4,"88","161");
-        // repeat
-/*         await drawString(expStr1, "88","107");
-        await drawString(expStr2,"88","125");
-        await drawString(expStr3,"88","143");
-        await drawString(expStr4,"88","161"); */
     }
-    // delay then go dark, commenting out to test reliability
-    /* await delay(3000); // ------ how long to display the alert for (ms)
+    // delay then go dark
+    await delay(3000); // ------ how long to display the alert for (ms)
     Puck.write(`
         Bangle.setLCDPower(1); \n
         Bangle.setLCDBrightness(1); \n
         g.setBgColor(1,0.25,0.9); \n
         g.clear(); \n
-    `) */
+    `)
 
 }
 
 function startWebSocket() {
 
     let isProcessing = false;
-
+    console.log("started");
     async function handleMessage(event) {
         if (isProcessing) {
             return;
         }
         isProcessing = true;
         const receivedData = event.data;
-        console.log('Raw data received: ', receivedData);
         await dataHandler(receivedData).finally(() => {
             isProcessing = false;
         });
