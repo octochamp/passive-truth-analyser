@@ -42,13 +42,13 @@ async function setColor(r,g,b) {
 }
 
 async function setFontScore() {
-    await Puck.write("g.setFont('Vector:24'); \n");
-    console.log("Setting font to Vector:24");
+    await Puck.write("g.setFont('Vector:21'); \n");
+    console.log("Setting font to Vector:21");
 }
 
 async function setFontSmall() {
-    await Puck.write("g.setFont('Vector:14'); \n");
-    console.log("Setting font to Vector:14");
+    await Puck.write("g.setFont('Vector:15'); \n");
+    console.log("Setting font to Vector:15");
 }
 
 async function setFontBig() {

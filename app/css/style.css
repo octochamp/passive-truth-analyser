@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Sono';
-    src: url('/fonts/Sono-VariableFont_MONO\,wght.ttf') format('truetype');
+    src: url('../../fonts/Sono-VariableFont_MONO\,wght.ttf') format('truetype');
     font-weight: 100 900;
 }
 
@@ -111,7 +111,7 @@ button:hover {
 
 #consoleLog {
     width: 90%;
-    max-height: 500px;
+    max-height: 380px;
     overflow-y: auto; /* Adds vertical scrollbar */
     background-color: rgba(255, 255, 255, 0.2);
     border: 1px solid #ddd; /* Border for the console box */

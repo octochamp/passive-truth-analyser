@@ -6,12 +6,15 @@ CURRENT_DIR=(pwd)
 HTML_FILE="file://$CURRENT_DIR/app/index.html"
 
 # Launch the first command in a new terminal window
-gnome-terminal -- python3 $CURRENT_DIR/app/websocketserver.py
+gnome-terminal -- python3 $CURRENT_DIR/app/transcriber.py
 
 # Launch the second command in a new terminal window
-gnome-terminal -- python3 $CURRENT_DIR/app/transcriber.py
+gnome-terminal -- python3 $CURRENT_DIR/app/websocketserver.py
 
 # Launch the third command in a new terminal window
 gnome-terminal -- $CURRENT_DIR/app/llmBridge
 
 google-chrome "$HTML_FILE"
+
+# Launch a terminal which spins up ollama with a useless command
+gnome-terminal -- ollama run mistral-openorca "Spell the word 'hello'"

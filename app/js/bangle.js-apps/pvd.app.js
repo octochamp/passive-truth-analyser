@@ -1,9 +1,9 @@
 g.clear(1);
 Bangle.setLCDPower(1);
-g.setBgColor(1,0.25,0.9);
+g.setBgColor(0,0,0);
 g.clear();
 g.setColor(1,1,1);
-g.setFont("Vector:26", 0, 0);
+g.setFont("Vector:25", 0, 0);
 g.setFontAlign(0,0,0);
 g.drawString("Personal", 88, 56);
 g.drawString("Verification", 88, 88);

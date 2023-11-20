@@ -1,14 +1,14 @@
 function splitTextIntoLines(explanation) {
     const maxLineLength = 20;
     const words = explanation.split(' ');
-    const lines = ['', '', '', ''];
+    const lines = ['', '', '', '', ''];
   
     let currentLineIndex = 0;
     let currentLineLength = 0;
   
     for (const word of words) {
-        if (currentLineIndex === 3 && currentLineLength + word.length + 3 > maxLineLength) {
-            // If we're on the fourth line and can't fit the current word + "..."
+        if (currentLineIndex === 4 && currentLineLength + word.length + 3 > maxLineLength) {
+            // If we're on the fifth line and can't fit the current word + "..."
             lines[currentLineIndex] += '...';
             break;
         }
@@ -27,15 +27,15 @@ function splitTextIntoLines(explanation) {
         }
     }
 
-    // If we reached the end of the words array without adding '...', add it to the fourth line
-    if (currentLineIndex === 3 && !lines[3].endsWith('...')) {
-        lines[3] += '...';
+    // If we reached the end of the words array without adding '...', add it to the fifth line
+    if (currentLineIndex === 4 && !lines[4].endsWith('...')) {
+        lines[4] += '...';
     }
   
     // Assign the lines to the variables
-    const [expStr1, expStr2, expStr3, expStr4] = lines;
+    const [expStr1, expStr2, expStr3, expStr4, expStr5] = lines;
   
-    return { expStr1, expStr2, expStr3, expStr4 };
+    return { expStr1, expStr2, expStr3, expStr4, expStr5 };
 }
 
 function contentBuilder(evaluation) {
@@ -47,7 +47,7 @@ function contentBuilder(evaluation) {
         case "2":
             return { colour: "0.5,0,0.25", vibrate: "320", text1: "SEEMS", text2: "WRONG", lines: 2, lcd:"on" }
         case "3":
-            return { colour: "0.25,0,0.5", vibrate: "160", text1: "FEELS", text2: "SKETCHY", lines: 2, lcd:"on" }
+            return { colour: "0.25,0,0.5", vibrate: "160", text1: "MAYBE", text2: "FALSE", lines: 2, lcd:"on" }
         case "4":
             return { colour: "0,0,1", vibrate: "80", text1: "UNSURE", text2: "", lines: 1, lcd:"on" }
         case "5":
