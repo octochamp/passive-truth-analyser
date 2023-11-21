@@ -94,8 +94,8 @@ async function dataHandler(data) {
         let content = {
             colour: "1,0.25,0.9",
             vibrate: "1",
-            text1: "",
-            text2: "Listening",
+            text1: "No",
+            text2: "Response",
             lines: 2,
             lcd: "off"
         }

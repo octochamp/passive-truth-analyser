@@ -46,6 +46,7 @@ function fourLines(expStr1, expStr2, expStr3, expStr4) {
         g.drawString("${escapeQuotes(expStr2)}",88,117); \n
         g.drawString("${escapeQuotes(expStr3)}",88,135); \n
         g.drawString("${escapeQuotes(expStr4)}",88,153); \n
+        g.drawString("${escapeQuotes(expStr4)}",88,153); \n
     `);
 }
 
@@ -66,7 +67,7 @@ function delay(ms) {
 }
 
 async function alertHandler(colour, vibrateTime, text1, text2, evalLines, lcd, evaluation, explanation) {
-    let expStr1, expStr2, expStr3, expStr4
+    let expStr1, expStr2, expStr3, expStr4, expstr5
     let alertSound = new Audio("../audio/" + evaluation + ".wav");
     alertSound.play();
     let numberOfLines = 5; // default
