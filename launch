@@ -1,20 +1,23 @@
 #!/bin/bash
 
 # Get current dir
-CURRENT_DIR=(pwd)
+CURRENT_DIR=$(pwd)
 
 HTML_FILE="file://$CURRENT_DIR/app/index.html"
 
-# Launch the first command in a new terminal window
+# Launch the STT transcription
 gnome-terminal -- python3 $CURRENT_DIR/app/transcriber.py
 
-# Launch the second command in a new terminal window
+# Launch the websocket server
 gnome-terminal -- python3 $CURRENT_DIR/app/websocketserver.py
 
-# Launch the third command in a new terminal window
+# start Ollama server
+gnome-terminal -- ollama serve
+
+# Launch the bridging app
 gnome-terminal -- $CURRENT_DIR/app/llmBridge
 
-google-chrome "$HTML_FILE"
-
-# Launch a terminal which spins up ollama with a useless command
+# Launch a terminal which spins up ollama with a useless command to check it's working
 gnome-terminal -- ollama run mistral-openorca "Spell the word 'hello'"
+
+google-chrome "$HTML_FILE"
