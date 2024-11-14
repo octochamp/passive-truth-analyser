@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Set working dir
+CURRENT_DIR="/home/nathan/Documents/RCA-IED/Term-1/passive-verification-device"
+
+HTML_FILE="file://$CURRENT_DIR/app/index.html"
+
+# Launch the STT transcription
+gnome-terminal -- python3 $CURRENT_DIR/app/transcriber.py
+
+# Launch the websocket server
+gnome-terminal -- python3 $CURRENT_DIR/app/websocketserver.py
+
+# start Ollama server
+gnome-terminal -- ollama serve
+
+# Launch the bridging app
+gnome-terminal -- $CURRENT_DIR/app/llmBridge
+
+# Launch a terminal which spins up ollama with a useless command to check it's working
+gnome-terminal -- ollama run mistral-openorca "Spell the word 'hello'"
+
+google-chrome "$HTML_FILE"
